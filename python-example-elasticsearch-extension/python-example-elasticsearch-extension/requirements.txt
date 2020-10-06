@@ -1,0 +1,4 @@
+boto3==1.14.33
+requests==2.24.0
+requests-aws4auth==1.0
+six==1.15.0

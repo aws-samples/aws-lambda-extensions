@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+# the path to the interpreter and all of the originally intended arguments
+args = []
+ARGV.each do|a|
+  args << a
+end
+
+# the extra options we want to pass to the interpreter
+extra_args=["--enable", "frozen-string-literal"]
+
+# insert the extra options
+args.insert(1,extra_args[0])
+args.insert(2,extra_args[1])
+
+# start the runtime with the extra options
+exec *args

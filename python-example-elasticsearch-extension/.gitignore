@@ -1,0 +1,21 @@
+# python files
+*/__pycache__/*
+*.pyc
+six*
+
+# python dependencies
+python-example-elasticsearch-extension/HISTORY.md
+python-example-elasticsearch-extension/LICENSE
+python-example-elasticsearch-extension/README.md
+python-example-elasticsearch-extension/bin
+python-example-elasticsearch-extension/boto*
+python-example-elasticsearch-extension/certifi*
+python-example-elasticsearch-extension/chardet*
+python-example-elasticsearch-extension/dateutil*
+python-example-elasticsearch-extension/docutils*
+python-example-elasticsearch-extension/idna*
+python-example-elasticsearch-extension/jmespath*
+python-example-elasticsearch-extension/python_dateutil*
+python-example-elasticsearch-extension/requests*
+python-example-elasticsearch-extension/s3transfer*
+python-example-elasticsearch-extension/urllib3*

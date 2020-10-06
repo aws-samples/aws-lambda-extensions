@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+import os
+
+# the path to the interpreter and all of the originally intended arguments
+args = os.sys.argv[1:]
+
+# the extra options we want to pass to the interpreter
+extra_args = ["-X", "importtime"]
+
+# insert the extra options
+args[1:1] = extra_args
+
+# start the runtime with the extra options
+os.system(" ".join(args))

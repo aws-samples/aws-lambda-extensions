@@ -1,0 +1,11 @@
+# python files
+*/__pycache__/*
+*.pyc
+
+# python dependencies
+python-example-extension/bin
+python-example-extension/certifi*
+python-example-extension/chardet*
+python-example-extension/idna*
+python-example-extension/requests*
+python-example-extension/urllib3*
