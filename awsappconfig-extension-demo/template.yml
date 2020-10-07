@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda AppConfig Extension Demo
+##########################################################################
+#  Parameters & Globals                                                  #
+##########################################################################
+Parameters: 
+  AppConfigARN: 
+    Type: String
+    Default: 'arn:aws:lambda:us-east-1:027255383542:layer:AWSAppConfigExtension:7'
+  AppConfigProfile: 
+    Type: String
+    Default: DemoExtensionApplication/Production/LoggingLevel/LogLevel
+Globals:
+  Function:
+    Tracing: Active
+    Tags:
+      Application: AppConfigDemoExtension
+Resources:
+##########################################################################
+#  Lambda functions                                                      #
+##########################################################################
+  Function1:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Lambda function that retrieves AppConfig configuration settings using Lambda extensions.
+      Runtime: nodejs12.x
+      Handler: src/AppConfigExtensionDemoFunction.handler
+      Layers:
+        - !Ref AppConfigARN
+      MemorySize: 128
+      Timeout: 100
+      Environment:
+        Variables:
+          APPCONFIG_PROFILE:
+            Ref: AppConfigProfile
+      Policies:
+      - Statement:
+          - Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}'
+              - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/environment/${AppConfigEnvironment}'
+              - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/configurationprofile/${AppConfigConfigurationProfile}'
+            Action:
+              - appconfig:GetConfiguration
+  Function2:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Lambda function that retrieves AppConfig configuration settings using Lambda extensions.
+      Runtime: nodejs12.x
+      Handler: src/AppConfigExtensionDemoFunction.handler
+      Layers:
+        - !Ref AppConfigARN
+      MemorySize: 128
+      Timeout: 100
+      Environment:
+        Variables:
+          APPCONFIG_PROFILE:
+            Ref: AppConfigProfile
+      Policies:
+      - Statement:
+          - Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}'
+              - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/environment/${AppConfigEnvironment}'
+              - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/configurationprofile/${AppConfigConfigurationProfile}'
+            Action:
+              - appconfig:GetConfiguration
+##########################################################################
+#  AppConfig Resources                                                   #
+##########################################################################
+  AppConfigApplication:
+    Type: AWS::AppConfig::Application
+    Properties: 
+      Name: DemoExtensionApplication
+  AppConfigEnvironment:
+    Type: AWS::AppConfig::Environment
+    Properties: 
+      Name: 'Production'
+      ApplicationId: 
+        Ref: AppConfigApplication
+  AppConfigConfigurationProfile:
+    Type: AWS::AppConfig::ConfigurationProfile
+    Properties: 
+      Name: 'LoggingLevel'
+      ApplicationId: 
+        Ref: AppConfigApplication
+      LocationUri: "hosted"
+  AppConfigHostedConfigurationVersion:
+    Type: AWS::AppConfig::HostedConfigurationVersion
+    Properties: 
+      ApplicationId: 
+        Ref: AppConfigApplication
+      ConfigurationProfileId: 
+        Ref: AppConfigConfigurationProfile
+      Content: '{"loglevel": "normal"}'
+      ContentType: application/json
+  AppConfigDeployment:
+    Type: AWS::AppConfig::Deployment
+    Properties: 
+      ApplicationId: 
+        Ref: AppConfigApplication
+      ConfigurationProfileId: 
+        Ref: AppConfigConfigurationProfile
+      ConfigurationVersion:
+        Ref: AppConfigHostedConfigurationVersion
+      DeploymentStrategyId:
+        Ref: DeploymentStrategy
+      EnvironmentId:
+        Ref: AppConfigEnvironment
+  DeploymentStrategy:
+    Type: AWS::AppConfig::DeploymentStrategy
+    Properties: 
+      Name: "AllAtOnce"
+      DeploymentDurationInMinutes: 0
+      FinalBakeTimeInMinutes: 0
+      GrowthFactor: 100
+      GrowthType: LINEAR
+      ReplicateTo: NONE
