@@ -9,7 +9,7 @@ Extensions use the Extensions API, a new HTTP interface, to register for lifecyc
 
 Note: an internal extension runs in the runtime process, and shares the same lifecycle as the runtime. An external extension runs as a separate process in the execution environment. The extension runs in parallel with the function's runtime. It is initialized before the function is invoked and continues to run after the function invocation is complete
 
-For more information, see [Using AWS Lambda extensions](https://docs.aws.amazon.com/lambda/latest/dg/invocation-extensions.html).
+For more information, see [Using AWS Lambda extensions](https://docs.aws.amazon.com/lambda/latest/dg/using-extensions.html).
 
 In this repository you'll find a number of different sample projects and demos to help you get started with building your own extension. These include:
 
