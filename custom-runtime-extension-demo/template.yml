@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda Custom Runtime Extension Demo
+##########################################################################
+#  Parameters & Globals                                                  #
+##########################################################################
+Globals:
+  Function:
+    Tracing: Active
+    Tags:
+      Application: CustomRuntimeExtensionDemo
+Resources:
+##########################################################################
+#  Lambda functions                                                      #
+##########################################################################
+  Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: custom-runtime-extension-demo-function
+      Description: Extension Demo Function
+      CodeUri: ./function/function.sh
+      Runtime: provided.al2
+      Handler: function.handler
+      MemorySize: 128
+      Timeout: 100
+      Layers:
+        - !Ref CustomRuntimeLayer
+        - !Ref ExtensionsLayer
+##########################################################################
+#  Lambda layers                                                         #
+##########################################################################
+  CustomRuntimeLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: custom-runtime-layer
+      Description: Layer containing custom runtime and function code
+      ContentUri: runtime.zip
+      CompatibleRuntimes:
+        - provided.al2
+      LicenseInfo: 'Available under the MIT-0 license.'
+      RetentionPolicy: Delete
+  ExtensionsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: extensions-layer
+      Description: Layer containing extension(s)
+      ContentUri: extensions.zip
+      CompatibleRuntimes:
+        - provided.al2
+      LicenseInfo: 'Available under the MIT-0 license.'
+      RetentionPolicy: Delete
