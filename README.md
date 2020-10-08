@@ -21,9 +21,9 @@ In this repository you'll find a number of different sample projects and demos t
 * [Crash uploader extension in Go](go-example-crash-uploader-extension/)
 * [ElasticSearch extension in Python](python-example-elasticsearch-extension/)
 * [Lambda layer extension using SAM](go-example-extension-sam-layer/)
-* [Wrapper script in Bash](bash-wrapper-example/)
-* [Wrapper script in Python](python-wrapper-example/)
-* [Wrapper script in Ruby](ruby-wrapper-example/)
+* [Wrapper script in Bash](bash-example-wrapper/)
+* [Wrapper script in Python](python-example-wrapper/)
+* [Wrapper script in Ruby](ruby-example-wrapper/)
 
 
 ## Security
