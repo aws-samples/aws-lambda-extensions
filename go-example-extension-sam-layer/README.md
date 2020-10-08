@@ -13,11 +13,11 @@ You'll need AWS SAM and Go in your local machine.
 Building function 'HelloWorldFunction'
 Running CustomMakeBuilder:CopySource
 Running CustomMakeBuilder:MakeBuild
-Current Artifacts Directory : /Users/sancard/work/src/code.amazon.com/LambdaExtensionsShowcase/go-example-extension-sam-layer/.aws-sam/build/HelloWorldFunction
+Current Artifacts Directory : /<local-path-to-repo>/go-example-extension-sam-layer/.aws-sam/build/HelloWorldFunction
 Building layer 'GoExampleExtensionLayer'
 Running CustomMakeBuilder:CopySource
 Running CustomMakeBuilder:MakeBuild
-Current Artifacts Directory : /Users/sancard/work/src/code.amazon.com/LambdaExtensionsShowcase/go-example-extension-sam-layer/.aws-sam/build/GoExampleExtensionLayer
+Current Artifacts Directory : /<local-path-to-repo>/go-example-extension-sam-layer/.aws-sam/build/GoExampleExtensionLayer
 
 Build Succeeded
 
