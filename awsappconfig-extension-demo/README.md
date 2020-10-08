@@ -1,7 +1,7 @@
 # AWS AppConfig Extension Demo
 This is a demo of [AWS Lambda](https://aws.amazon.com/lambda/) extensions using [AWS AppConfig](https://docs.aws.amazon.com/appconfig/latest/userguide/what-is-appconfig.html) as explained in the blog post "Introducing Lambda Extensions".
 
-AWS AppConfig has an available extension to further integrate Lambda and AWS AppConfig. The extension runs a separate local process to retrieve configuration data from the AWS AppConfig service.
+AWS AppConfig has an [available extension](https://aws.amazon.com/blogs/compute/introducing-aws-lambda-extensions-in-preview/) to further integrate Lambda and AWS AppConfig. The extension runs a separate local process to retrieve configuration data from the AWS AppConfig service.
 
 Using the AWS AppConfig extension, a function can fetch configuration data faster using a local call rather than over the network. You can dynamically change a function’s external configuration settings during invocations, without having to redeploy the function. As AWS AppConfig has robust validation features, all configuration changes can be tested safely before rolling out to one or more Lambda functions. 
 
@@ -24,7 +24,7 @@ AWS SAM creates an AWS AppConfig application, environment, and configuration pro
 ```bash
 git clone https://github.com/aws-samples/aws-lambda-extensions
 ```
-3. Get the latest Amazon Resource Name (ARN) of the AppConfig Extension for your Region from the [AWS AppConfig Extensions Blog Post](). It is in the format `arn:aws:lambda:us-east-1:027255383542:layer:AWS-AppConfig-Extension:1`
+3. Get the latest Amazon Resource Name (ARN) of the AppConfig Extension for your Region from the [AWS AppConfig Documentation](https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-integration-lambda-extensions.html). It is in the format `arn:aws:lambda:<Region>:<Account>:layer:AWS-AppConfig-Extension:1`
 
 4. Deploy the SAM template from the command line:
 ```bash
