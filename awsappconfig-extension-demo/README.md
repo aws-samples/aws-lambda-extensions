@@ -24,7 +24,7 @@ AWS SAM creates an AWS AppConfig application, environment, and configuration pro
 ```bash
 git clone https://github.com/aws-samples/aws-lambda-extensions
 ```
-3. Get the latest Amazon Resource Name (ARN) of the AppConfig Extension for your Region from the [AWS AppConfig Extensions Blog Post](). It is in the format `arn:aws:lambda:us-east-1:027255383542:layer:AWSAppConfigExtension:7`
+3. Get the latest Amazon Resource Name (ARN) of the AppConfig Extension for your Region from the [AWS AppConfig Extensions Blog Post](). It is in the format `arn:aws:lambda:us-east-1:027255383542:layer:AWS-AppConfig-Extension:1`
 
 4. Deploy the SAM template from the command line:
 ```bash
