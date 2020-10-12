@@ -24,7 +24,7 @@ git clone https://github.com/aws-samples/aws-lambda-extensions
 cd custom-runtime-extension-demo
 ```
 ### 1.  Create the custom `runtime.zip` file
-Create a `runtime.zip` file with the bootstrap executable named `bootstrap` in the root directory.
+Create a `runtime.zip` file with the executable custom shell script named `bootstrap` in the root directory.
 
 ```
 $ chmod +x runtime/bootstrap
