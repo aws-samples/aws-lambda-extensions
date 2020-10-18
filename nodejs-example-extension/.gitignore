@@ -1,0 +1,11 @@
+# python files
+*/__pycache__/*
+*.pyc
+
+# python dependencies
+nodejs-example-extension/bin
+nodejs-example-extension/certifi*
+nodejs-example-extension/chardet*
+nodejs-example-extension/idna*
+nodejs-example-extension/requests*
+nodejs-example-extension/urllib3*
