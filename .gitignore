@@ -171,6 +171,7 @@ Temporary Items
 
 ### VisualStudioCode ###
 .vscode/*
+../.vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -207,4 +208,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,visualstudiocode,intellij,go
+#AWS SAM
+
+samconfig.toml
