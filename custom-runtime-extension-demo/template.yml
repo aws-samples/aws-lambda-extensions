@@ -18,7 +18,7 @@ Resources:
     Properties:
       FunctionName: custom-runtime-extension-demo-function
       Description: Extension Demo Function
-      CodeUri: function/
+      CodeUri: functionsrc/
       Runtime: provided.al2
       Handler: function.handler
       MemorySize: 128
@@ -42,6 +42,6 @@ Resources:
     Properties:
       LayerName: extensions-layer
       Description: Layer containing extension(s)
-      ContentUri: extensions/
+      ContentUri: extensionssrc/
       LicenseInfo: 'Available under the MIT-0 license.'
       RetentionPolicy: Delete
