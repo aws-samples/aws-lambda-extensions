@@ -11,8 +11,8 @@ There are two deployment options to create the demo function. Either creating ea
 
 There are two deployment options to create the demo function. 
 
-* Deploying all components together using the [AWS Serverless Application Model (AWS SAM)](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-* Creating each component individually using the [AWS CLI V2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) or 
+1.  Deploying all components together using the [AWS Serverless Application Model (AWS SAM)](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+2. Creating each component individually using the [AWS CLI V2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) or 
 
 ## Requirements
 
@@ -27,7 +27,7 @@ Depending on which deployment method you choose, ensure you have the correct ins
 2. Clone the repo onto your local development machine:
 ```bash
 git clone https://github.com/aws-samples/aws-lambda-extensions
-cd custom-runtime-extension-demo
+cd aws-lambda-extensions/custom-runtime-extension-demo
 ```
 Now select, either one of the deployment options
 ## Deployment option 1: All components using AWS SAM
@@ -64,7 +64,7 @@ Zip file size: 1181 bytes, number of entries: 1
 Create a `function.zip` file with the `function.sh` file in the root directory.
 
 ```
-$ chmod +x function/function.sh
+$ chmod +x functionsrc/function.sh
 $ zip -j function.zip function/function.sh
 $ zipinfo function.zip
 Archive:  function.zip
@@ -78,9 +78,10 @@ Create an `extensions.zip` file containing a root directory called extensions" i
 
 Example for single extension:
 ```bash
-$ cd extensions
+$ cd extensionssrc
 $ chmod +x extensions/extension1.sh
-$ zip extensions.zip extensions/extension1.sh
+$ zip ../extensions.zip extensions/extension1.sh
+$ cd ..
 $ zipinfo extensions.zip 
 Archive:  extensions.zip
 Zip file size: 1029 bytes, number of entries: 1
@@ -89,9 +90,11 @@ Zip file size: 1029 bytes, number of entries: 1
 ```
 Example for multiple extensions:
 ```bash
+$ cd extensionssrc
 $ chmod +x extensions/extension1.sh
 $ chmod +x extensions/extension2.sh
-$ zip extensions.zip extensions/extension1.sh extensions/extension2.sh
+$ zip ../extensions.zip extensions/extension1.sh extensions/extension2.sh
+$ cd ..
 $ zipinfo extensions.zip 
 Archive:  extensions.zip
 Zip file size: 2036 bytes, number of entries: 2
