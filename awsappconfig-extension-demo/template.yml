@@ -117,3 +117,14 @@ Resources:
       GrowthFactor: 100
       GrowthType: LINEAR
       ReplicateTo: NONE
+##########################################################################
+#  OUTPUTS                                                               #
+##########################################################################
+Outputs:
+  Function1:
+    Value: !Ref Function1
+    Description: AWSAppConfig Extension Demo Function1
+  Function2:
+    Value: !Ref Function2
+    Description: AWSAppConfig Extension Demo Function2
+            
