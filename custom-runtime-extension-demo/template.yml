@@ -45,3 +45,16 @@ Resources:
       ContentUri: extensionssrc/
       LicenseInfo: 'Available under the MIT-0 license.'
       RetentionPolicy: Delete
+##########################################################################
+#  OUTPUTS                                                               #
+##########################################################################
+Outputs:
+  CustomRuntimeLayer:
+    Value: !Ref CustomRuntimeLayer
+    Description: Custom Runtime Layer ARN
+  ExtensionsLayer:
+    Value: !Ref ExtensionsLayer
+    Description: Extension Layer ARN
+  Function:
+    Value: !Ref Function
+    Description: Lambda Function
