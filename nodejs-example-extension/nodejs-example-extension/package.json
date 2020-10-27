@@ -1,5 +1,5 @@
 {
-  "name": "secrets-extension",
+  "name": "nodejs-example-extension",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
