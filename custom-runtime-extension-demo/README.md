@@ -6,9 +6,6 @@ The runtime, function, and extension(s) each log output to Amazon CloudWatch Log
 
 You create three .zip files for this demo to create a custom runtime with extensions. One is for the runtime, one for the function code, and one for the extension(s).
 
-There are two deployment options to create the demo function. Either creating each component individually using the [AWS CLI V2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) or deploying all components together using the [AWS Serverless Application Model (AWS SAM)](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-
-
 There are two deployment options to create the demo function. 
 
 1.  Deploying all components together using the [AWS Serverless Application Model (AWS SAM)](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
