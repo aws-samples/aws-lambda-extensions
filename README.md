@@ -24,6 +24,7 @@ In this repository you'll find a number of different sample projects and demos t
 * [Wrapper script in Bash](bash-example-wrapper/)
 * [Wrapper script in Python](python-example-wrapper/)
 * [Wrapper script in Ruby](ruby-example-wrapper/)
+* [Extension in Node.js](nodejs-example-extension/)
 
 
 ## Security
