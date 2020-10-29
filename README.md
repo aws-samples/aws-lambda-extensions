@@ -17,6 +17,7 @@ In this repository you'll find a number of different sample projects and demos t
 * [Custom runtime extension demo](custom-runtime-extension-demo/)
 * [Extension in Go](go-example-extension/)
 * [Extension in Python](python-example-extension/)
+* [Extension in Node.js](nodejs-example-extension/)
 * [Inter-process communication extension in Go](go-example-ipc-extension/)
 * [Crash uploader extension in Go](go-example-crash-uploader-extension/)
 * [ElasticSearch extension in Python](python-example-elasticsearch-extension/)
