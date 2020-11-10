@@ -1,6 +1,8 @@
 # Custom Runtime Extension(s) Demo
 
-This is a demo of AWS Lambda extensions. The demo uses the custom runtime `provided.al2` with one or more extensions delivered as Lambda Layers.
+This is a demo of AWS Lambda extensions as explained in the blog post [Building Extensions for AWS Lambda](https://aws.amazon.com/blogs/compute/building-extensions-for-aws-lambda-in-preview/).
+
+The demo uses the custom runtime `provided.al2` with one or more extensions delivered as Lambda Layers.
 
 The runtime, function, and extension(s) each log output to Amazon CloudWatch Logs. This shows how you can generate logs before, during, and after function invocation. The extension(s) register and then run a loop, sleeping for 5 seconds to simulate processing and then wait for a function invocation.
 
