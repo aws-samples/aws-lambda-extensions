@@ -1,5 +1,5 @@
 # AWS AppConfig Extension Demo
-This is a demo of [AWS Lambda](https://aws.amazon.com/lambda/) extensions using [AWS AppConfig](https://docs.aws.amazon.com/appconfig/latest/userguide/what-is-appconfig.html) as explained in the blog post "Introducing Lambda Extensions".
+This is a demo of [AWS Lambda](https://aws.amazon.com/lambda/) extensions using [AWS AppConfig](https://docs.aws.amazon.com/appconfig/latest/userguide/what-is-appconfig.html) as explained in the blog post [Introducing Lambda Extensions](https://aws.amazon.com/blogs/compute/introducing-aws-lambda-extensions-in-preview/).
 
 AWS AppConfig has an [available extension](https://aws.amazon.com/blogs/compute/introducing-aws-lambda-extensions-in-preview/) to further integrate Lambda and AWS AppConfig. The extension runs a separate local process to retrieve configuration data from the AWS AppConfig service.
 
