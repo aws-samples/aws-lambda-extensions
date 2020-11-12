@@ -15,9 +15,12 @@ In this repository you'll find a number of different sample projects and demos t
 
 * [AWS AppConfig extension demo](awsappconfig-extension-demo/)
 * [Custom runtime extension demo](custom-runtime-extension-demo/)
+* [Logs to Amazon S3 extension demo](s3-logs-extension-demo/)
 * [Extension in Go](go-example-extension/)
 * [Extension in Python](python-example-extension/)
 * [Extension in Node.js](nodejs-example-extension/)
+* [Logs API Extension in Go](go-example-logs-api-extension/)
+* [Logs API Extension in Python](python-example-logs-api-extension/)
 * [Inter-process communication extension in Go](go-example-ipc-extension/)
 * [Crash uploader extension in Go](go-example-crash-uploader-extension/)
 * [ElasticSearch extension in Python](python-example-elasticsearch-extension/)
