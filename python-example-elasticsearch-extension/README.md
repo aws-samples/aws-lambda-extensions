@@ -31,3 +31,8 @@ Add the newly created layer version to a Python 3.8 runtime Lambda function.
 ```bash
 aws lambda update-function-configuration --region <use your region> --function-name <your function name> --layers <LayerVersionArn from previous step>
 ```
+
+## Lambda Function Deployment
+When deploying the Lambda function, be sure to include configure two environment variables that the extension will leverage for communicating with the Elasticsearch cluster.
+ES_ENDPOINT: The endpoint for the Elasticsearch cluster, e.g. elasticsearch.example.com (don't need to include https:// or the trailing /). This endpoint must be reachable from the Lambda function.
+ES_INDEX: The index to which the extension should write log outputs.
