@@ -31,11 +31,3 @@ Add the newly created layer version to a Python 3.8 runtime Lambda function.
 ```bash
 aws lambda update-function-configuration --region <use your region> --function-name <your function name> --layers <LayerVersionArn from previous step>
 ```
-
-## Function Invocation and Extension Execution
-After invoking the function and receiving the shutdown event, you should now see log messages from the example extension written back to the extension logs. For example:
-```
-...
-BATCH RECEIVED: [{'time': '2020-11-12T23:46:29.128Z', 'type': 'platform.start', 'record': {'requestId': '6a6a0f2e-97fd-4bd5-b7e1-6013b7b79c79', 'version': '$LATEST'}}, {'time': '2020-11-12T23:46:29.364Z', 'type': 'platform.logsSubscription', 'record': {'name': 'logs_api_elasticsearch_extension.py', 'state': 'Subscribed', 'types': ['platform', 'function']}}, {'time': '2020-11-12T23:46:29.364Z', 'type': 'platform.extension', 'record': {'name': 'logs_api_elasticsearch_extension.py', 'state': 'Ready', 'events': ['INVOKE', 'SHUTDOWN']}}, {'time': '2020-11-12T23:46:29.379Z', 'type': 'function', 'record': "{'es_endpoint': 'elasticsearch.example.com', 'es_index': 'logs'}\n"}, {'time': '2020-11-12T23:46:29.379Z', 'type': 'function', 'record': "{'key1': 'value1', 'key2': 'value2', 'key3': 'value3'}\n"}, {'time': '2020-11-12T23:46:29.398Z', 'type': 'platform.end', 'record': {'requestId': '6a6a0f2e-97fd-4bd5-b7e1-6013b7b79c79'}}, {'time': '2020-11-12T23:46:29.398Z', 'type': 'platform.report', 'record': {'requestId': '6a6a0f2e-97fd-4bd5-b7e1-6013b7b79c79', 'metrics': {'durationMs': 33.29, 'billedDurationMs': 100, 'memorySizeMB': 128, 'maxMemoryUsedMB': 80, 'initDurationMs': 448.56}}}]
-...
-```
