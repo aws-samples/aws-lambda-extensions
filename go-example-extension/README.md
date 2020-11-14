@@ -9,7 +9,7 @@ To run this example, you will need to ensure that your build architecture matche
 Building and saving package into a `bin/extensions` directory:
 ```bash
 $ cd go-example-extension
-$ GOOS=linux GOARCH=amd64 go build -o bin/extensions/go-example-extension main.go
+$ GOOS=linux GOARCH=amd64 go build -v -ldflags '-d -s -w' -a -tags netgo -installsuffix netgo -o bin/extensions/go-example-extension main.go
 $ chmod +x bin/extensions/go-example-extension
 ```
 
