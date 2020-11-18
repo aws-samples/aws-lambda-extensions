@@ -1,0 +1,12 @@
+{
+  "name": "aws-secrets-lambda-extension",
+  "version": "4.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.1",
+    "js-yaml": "~3.14.0",
+    "aws-sdk": "^2.779.0",
+    "express": "^4.17.1"
+  }
+}

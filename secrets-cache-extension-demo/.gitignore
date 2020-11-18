@@ -1,0 +1,6 @@
+.DS_Store
+extension.zip
+nodejs-secrets-aws-lambda-extension/.idea/*
+nodejs-secrets-aws-lambda-extension/node_modules/*
+nodejs-secrets-aws-lambda-extension/package-lock.json
+.idea/*
