@@ -56,9 +56,8 @@ async function readFile() {
     }
 }
 
-async function processPayload(req, res) {
-    var now = new Date();
-    if (now > new Date()) {
+async function processPayload(req, res) {   
+    if (new Date() > cacheLastUpdated) {
         await readFile();
         console.log("Cache update is complete")
     }
