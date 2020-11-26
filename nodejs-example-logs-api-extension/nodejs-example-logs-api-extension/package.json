@@ -1,0 +1,10 @@
+{
+  "name": "nodejs-example-extension",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "*",
+    "node-fetch": "^2.6.1"
+  }
+}
