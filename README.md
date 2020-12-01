@@ -29,7 +29,7 @@ In this repository you'll find a number of different sample projects and demos t
 * [Wrapper script in Python](python-example-wrapper/)
 * [Wrapper script in Ruby](ruby-example-wrapper/)
 * [Secrets Cache Extension Demo](secrets-cache-extension-demo/)
-
+* [Extension in Java 11](java-example-extension/)
 
 ## Security
 
