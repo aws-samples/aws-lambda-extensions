@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda Extensions S3 Logs Demo
+##########################################################################
+#  Parameters & Globals                                                  #
+##########################################################################
+Globals:
+  Function:
+    Tracing: Active
+    Tags:
+      Application: S3LogsExtensionDemoContainerImage
+Resources:
+##########################################################################
+#  Lambda functions                                                      #
+##########################################################################
+  function:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: logs-extension-demo-function-container-image
+      Description: Logs Extension Demo Function
+      PackageType: Image
+      MemorySize: 128
+      Timeout: 100
+      Environment:
+        Variables:
+          S3_BUCKET_NAME:
+            Ref: LogExtensionsBucket
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref LogExtensionsBucket
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./functionsrc
+##########################################################################
+#  S3 Resources                                                   #
+##########################################################################
+  LogExtensionsBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteAfterSevenDays
+            Status: "Enabled"
+            ExpirationInDays: 7
+
+##########################################################################
+#  OUTPUTS                                                               #
+##########################################################################
+Outputs:
+  Function:
+    Value: !Ref function
+    Description: Lambda Function
+  LogExtensionsBucketName:
+    Value: !Ref LogExtensionsBucket

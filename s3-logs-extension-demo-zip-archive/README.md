@@ -1,8 +1,10 @@
-# Logs Extension Demo
+# S3-Logs Extension Demo using .zip archive
 
 This is a demo of the logging functionality available with [AWS Lambda](https://aws.amazon.com/lambda/) Extensions to send logs directly from Lambda to [Amazon Simple Storage Service (S3)](https://aws.amazon.com/s3/).
 
 For more information on the extensions logs functionality, see the blog post [Using AWS Lambda extensions to send logs to custom destinations](https://aws.amazon.com/blogs/compute/using-aws-lambda-extensions-to-send-logs-to-custom-destinations/)
+
+This example packages the extension and function as zip archives. See the s3-logs-extension-demo-container-image version to use the functionality with container images.
 
 > This is a simple example extension to help you start investigating the Lambda Runtime Logs API. This code is not production ready, and it has never intended to be. Use it with your own discretion after testing thoroughly.  
 
@@ -27,7 +29,7 @@ The demo deploys all components together using the [AWS Serverless Application M
 2. Clone the repo onto your local development machine:
 ```bash
 git clone https://github.com/aws-samples/aws-lambda-extensions
-cd logs-extension-demo
+cd s3-logs-extension-demo
 ```
 
 1. Run the following command for AWS SAM to deploy the components as specified in the `template.yml` file:
