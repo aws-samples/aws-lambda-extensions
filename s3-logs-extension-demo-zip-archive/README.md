@@ -29,7 +29,7 @@ The demo deploys all components together using the [AWS Serverless Application M
 2. Clone the repo onto your local development machine:
 ```bash
 git clone https://github.com/aws-samples/aws-lambda-extensions
-cd s3-logs-extension-demo
+cd s3-logs-extension-demo-zip-archive
 ```
 
 1. Run the following command for AWS SAM to deploy the components as specified in the `template.yml` file:
