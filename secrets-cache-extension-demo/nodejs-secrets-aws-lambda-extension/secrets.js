@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
 const yaml = require('js-yaml');
 const fs = require('fs');
 const AWS = require('aws-sdk');
@@ -30,9 +32,9 @@ async function readFile() {
         var data = yaml.safeLoad(fileContents);
 
         if (data !== null) {
-            var secretManagers = data.SecretManagers;
-            for (var i = 0; i < secretManagers.length; i++) {
-                var secrets = secretManagers[i].secrets;
+            var cacheManager = data.CacheManager;
+            for (var i = 0; i < cacheManager.length; i++) {
+                var secrets = cacheManager[i].secrets;
                 for (var j = 0; j < secrets.length; j++) {
                     var secretName = secrets[j];
                     try {
@@ -56,7 +58,7 @@ async function readFile() {
     }
 }
 
-async function processPayload(req, res) {   
+async function processPayload(req, res) {
     if (new Date() > cacheLastUpdated) {
         await readFile();
         console.log("Cache update is complete")

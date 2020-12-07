@@ -13,7 +13,7 @@ Here is the high level view of all the components
 
 ## Initializing extension and reading secrets from the cache
 Below sequence diagram explains the initialization of lambda extension and how lambda function
-reads cached secrets using HTTP server hosted inside the extension 
+reads cached secrets using HTTP server hosted inside the extension
 ![init](nodejs-secrets-aws-lambda-extension/img/InitSequence.png)
 
 ## Pre-requisites
@@ -61,31 +61,33 @@ exports.handler = function(event, context, callback) {
     req.end()
 };
 ```
-> Note: The code invokes the local HTTP server hosted inside lambda extension to read the secret's value instead 
+> Note: The code invokes the local HTTP server hosted inside lambda extension to read the secret's value instead
 > of directly going to AWS Secret's manager
 
 - Create a new file named "config.yaml" under the root directory with the following contents:
-> Note: Sample of the below yaml file can be found in "example-function/config.yaml" under the code repo. "secret_now" is the name of the secret we have created in the previous step, and we want to be cached by the extension. 
+> Note: Sample of the below yaml file can be found in "example-function/config.yaml" under the code repo. "secret_now" is the name of the secret we have created in the previous step, and we want to be cached by the extension.
 > If you want more secrets to be cached you can keep adding them here
 
 ```bash
-SecretManagers:
+CacheManager:
  – secrets:
     – secret_now
  ```
 
 - Click on "Deploy" button to deploy the latest changes
-- Create a new environment variable "CACHE_TIMEOUT" and set the value in minutes based on which the cache will be 
-refreshed
+- Create a new environment variable "CACHE_TIMEOUT" and set the value in minutes based on which the cache will be
+  refreshed
 > Note: If the environment value not found, then cache gets refreshed every 10 minutes
 
 - Increase the memory of Lambda to 1200 MB & Timeout to 30 seconds
 
 ### Deploy extension
-- Run the following command to deploy the extension and associate the layer to the Lambda function
+- Run the following command to deploy the extension and associate the layer to the Lambda function.
+  To deploy the extension, run `deploy.sh <<extension-name>> <<function-name>>` with the extension name and function name as parameters.
+
 ```bash
 > chmod +x deploy.sh
-> ./deploy.sh
+> ./deploy.sh Secrets-Lambda-Extension-Layer Secrets-Extension-Lambda-Test
 ```
 
 ### Invoke Lambda function
@@ -103,5 +105,5 @@ The function should return ```"StatusCode": 200```.
 ### View logs
 Browse to the Amazon CloudWatch Console. Navigate to Logs\Log Groups. Select the log group /aws/lambda/Secrets-Extension-Lambda-Test.
 
-View the log stream to see the runtime log with pattern ```"Response from cache"``` followed by username and password stored in 
+View the log stream to see the runtime log with pattern ```"Response from cache"``` followed by username and password stored in
 ```mycred.json```
