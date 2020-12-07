@@ -31,7 +31,7 @@ public class RegisterExtension {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(BODY))
                 .header("Content-Type", "application/json")
-                .header("Lambda-Extension-Name", "java-extension")
+                .header("Lambda-Extension-Name", "java-example-extension")
                 .uri(URI.create(registerUrl))
                 .build();
         try {

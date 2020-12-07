@@ -4,8 +4,7 @@
     <groupId>com.sample</groupId>
     <artifactId>java-example-extension</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>java-example-extension</name>
+    <version>1.0-SNAPSHOT</version>    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
