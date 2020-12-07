@@ -9,7 +9,7 @@ mvn clean install
 # Perform cleanup & create zip
 rm -Rf extensions/*.jar
 rm -Rf extensions/*.zip
-mv target/java-extension-1.0-SNAPSHOT.jar extensions
+mv target/java-example-extension-1.0-SNAPSHOT.jar extensions
 chmod -Rf +x extensions
 cd extensions
 zip -r extension.zip .

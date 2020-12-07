@@ -39,7 +39,7 @@ To build a Lambda layer that contains the extension dependencies, run `mvn clean
 
 To deploy the extension, run `run.sh <<extension-name>> <<function-name>>` with the extension name and function name as parameters.
 
-    java-example-extension$ ./run.sh java-extension blank-java   
+    java-example-extension$ ./run.sh java-example-extension blank-java   
 
 This script uses AWS CLI to perform the following:
 - Build the lambda extension

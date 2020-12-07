@@ -1,7 +1,0 @@
-#!/bin/bash
-
-LAMBDA_EXTENSION_NAME="java-extension"
-echo "${LAMBDA_EXTENSION_NAME}  Launching java extension"
-
-# Invoke as external extension
-java -jar /opt/java-extension-1.0-SNAPSHOT.jar

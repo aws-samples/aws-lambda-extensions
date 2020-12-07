@@ -9,6 +9,8 @@ import java.util.Optional;
 /**
  * Utility class that takes care of registration of extension and fetching the next event
  */
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
 public class RegisterExtension {
     private static final String BASEURL = String.format("http://%s/2020-01-01/extension", System.getenv("AWS_LAMBDA_RUNTIME_API"));
     private static final String BODY = "{" +

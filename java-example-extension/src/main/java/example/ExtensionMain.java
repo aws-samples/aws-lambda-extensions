@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 /**
  * Entry point for external extension
  */
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
 public class ExtensionMain {
     public static void main(String[] args) {
         // Register the extension for "INVOKE" and "SHUTDOWN" events

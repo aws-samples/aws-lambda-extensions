@@ -1,0 +1,10 @@
+#!/bin/bash
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+
+LAMBDA_EXTENSION_NAME="java-example-extension"
+echo "${LAMBDA_EXTENSION_NAME}  Launching java extension"
+
+# Invoke as external extension
+java -jar /opt/java-example-extension-1.0-SNAPSHOT.jar
