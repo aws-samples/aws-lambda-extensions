@@ -1,5 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
 exports.handler = function(event, context, callback) {
-
     const https = require('http')
     const options = {
         hostname: 'localhost',
