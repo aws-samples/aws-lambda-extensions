@@ -14,6 +14,8 @@ async function register() {
         }),
         headers: {
             'Content-Type': 'application/json',
+            // The extension name must match the file name of the extension itself that's in /opt/extensions/
+            // In this case that's: nodejs-example-logs-api-extension
             'Lambda-Extension-Name': basename(__dirname),
         }
     });

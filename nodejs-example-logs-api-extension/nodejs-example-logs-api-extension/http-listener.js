@@ -28,8 +28,8 @@ function listen(port) {
             response.end("OK");
         }
     });
-    server.listen(port);
-    console.log(`Listening for logs at http://localhost:${port}`);
+    server.listen(port, "sandbox");
+    console.log(`Listening for logs at http://sandbox:${port}`);
     return { logsQueue };
 }
 
