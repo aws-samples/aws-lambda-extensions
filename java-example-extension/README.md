@@ -4,7 +4,8 @@ The project source includes function code and supporting resources:
 
 - `src/main` - A Java extension.
 - `pom.xml` - A Maven build file.
-- `run.sh` - Shell script that will build the extension, create zip file, publish the lambda layer and update the lambda function with the latest version of this extension 
+- `run.sh` - Shell script that will build the extension, create zip file, publish the lambda layer and update the lambda function with the latest version of this extension
+- `zip.sh` - Shell script that builds the code and packages it extension.zip
 
 Use the following instructions to setup and deploy the sample extension.
 
@@ -35,23 +36,74 @@ To build a Lambda layer that contains the extension dependencies, run `mvn clean
 
     java-example-extension$ mvn clean install
 
-# Deploy
+# Deployment instruction
+You can deploy the extension by either following step-by-step instruction or using the shell script
 
-To deploy the extension, run `run.sh <<extension-name>> <<function-name>>` with the extension name and function name as parameters.
+## Step-by-step instruction
+1. Build and create extension.zip
+* Change the permission on the executable - Run the following command to change the permission of zip.sh
 
-    java-example-extension$ ./run.sh java-example-extension blank-java   
+  ```
+  java-example-extension$ chmod +x zip.sh
+  ```
+
+* Execute zip.sh - Run the following command to build the project and create extension.zip
+
+  ```
+  java-example-extension$ ./zip.sh
+  ```
+
+2. Set the environment variables - Run the following command to update environment variables so they can point to actual artifacts
+
+  ```
+  EXTENSION_NAME=<<ExtensionName>>
+  LAMBDA_FUNCTION=<<LambdaFunctionName>>
+  ```
+   
+2. Deploy the extension - Run the following command to deploy the extension as a lambda layer 
+
+  ```
+  java-example-extension$ aws lambda publish-layer-version \
+  --layer-name "${EXTENSION_NAME}" \
+  --zip-file "fileb://extension.zip"
+  ```
+
+3. Update the lambda function with the layer - Run the following command to update the lambda function to point to the latest version of the lambda 
+layer that we uploaded in the previous step
+
+  ```
+  java-example-extension$ aws lambda update-function-configuration \
+  --function-name ${LAMBDA_FUNCTION} \
+  --layers $(aws lambda list-layer-versions --layer-name ${EXTENSION_NAME} --max-items 1 \
+  --no-paginate --query 'LayerVersions[0].LayerVersionArn' --output text)
+  ```
+
+## Deploy using the shell script
+To deploy the extension using the bash script do the following:
+* Change the permission of the executable - Run the following command to change the permission of run.sh
+
+  ```
+  java-example-extension$ chmod +x run.sh
+  ```
+
+* Execute run.sh - Run the following command `run.sh <<extension-name>> <<function-name>>` with the extension name and function name as parameters.
+
+  ```
+  java-example-extension$ ./run.sh java-extension blank-java
+  ```   
 
 This script uses AWS CLI to perform the following:
-- Build the lambda extension
-- Creates deployment zip file "extension.zip"
-- Push the latest artifact in the form of zip as lambda layer
-- Update the lambda function with the latest version of the lambda layer published
+- Builds the lambda extension
+- Creates deployment zip file named as "extension.zip"
+- Push the latest extension.zip to lambda layer
+- Update the lambda function with the latest version of the lambda layer published in the previous step
 
-# Test
-To invoke the function, running the following command using AWS CLI.
+# Testing
+* To invoke the function, running the following command using AWS CLI
 
-    blank-java$ aws lambda invoke \
-                  --function-name "blank-java" \
-                  --payload '{"payload": "hello"}' /tmp/invoke-result \
-                  --cli-binary-format raw-in-base64-out \
-                  --log-type Tail                  
+ ```
+  java-example-extension$ aws lambda invoke \
+  --function-name "${LAMBDA_FUNCTION}" \
+  --payload '{"payload": "hello"}' /tmp/invoke-result \
+  --cli-binary-format raw-in-base64-out --log-type Tail
+  ```                  

@@ -1,3 +1,5 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
 package example;
 
 import com.google.gson.Gson;
@@ -7,17 +9,15 @@ import com.google.gson.JsonObject;
 /**
  * Entry point for external extension
  */
-// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: MIT-0
 public class ExtensionMain {
     public static void main(String[] args) {
         // Register the extension for "INVOKE" and "SHUTDOWN" events
-        final String extension = RegisterExtension.registerExtension();
+        final String extension = ExtensionClient.registerExtension();
         System.out.println("Extension registration complete, extensionID: " + extension);
 
         while (true) {
             try {
-                String response = RegisterExtension.getNext(extension);
+                String response = ExtensionClient.getNext(extension);
                 if (response != null && !response.isEmpty()) {
                     JsonObject eventJsonObject = new Gson().fromJson(response, JsonObject.class);
                     JsonElement eventTypeElement = eventJsonObject.get("eventType");

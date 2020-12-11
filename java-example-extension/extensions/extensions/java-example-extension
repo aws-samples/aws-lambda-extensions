@@ -2,9 +2,11 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
+set -euo pipefail
 
-LAMBDA_EXTENSION_NAME="java-example-extension"
-echo "${LAMBDA_EXTENSION_NAME}  Launching java extension"
+OWN_FILENAME="$(basename $0)"
+LAMBDA_EXTENSION_NAME="$OWN_FILENAME" # (external) extension name has to match the filename
 
 # Invoke as external extension
+echo "${LAMBDA_EXTENSION_NAME}  launching extension"
 java -jar /opt/java-example-extension-1.0-SNAPSHOT.jar
