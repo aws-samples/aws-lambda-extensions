@@ -55,8 +55,7 @@ You can deploy the extension by either following step-by-step instruction or usi
 
 2. Set the environment variables - Run the following command to update environment variables so they can point to actual artifacts
 
-  ```
-  EXTENSION_NAME=<<ExtensionName>>
+  ```  
   LAMBDA_FUNCTION=<<LambdaFunctionName>>
   ```
    
@@ -64,7 +63,7 @@ You can deploy the extension by either following step-by-step instruction or usi
 
   ```
   java-example-extension$ aws lambda publish-layer-version \
-  --layer-name "${EXTENSION_NAME}" \
+  --layer-name "java-example-extension" \
   --zip-file "fileb://extension.zip"
   ```
 
@@ -74,7 +73,7 @@ layer that we uploaded in the previous step
   ```
   java-example-extension$ aws lambda update-function-configuration \
   --function-name ${LAMBDA_FUNCTION} \
-  --layers $(aws lambda list-layer-versions --layer-name ${EXTENSION_NAME} --max-items 1 \
+  --layers $(aws lambda list-layer-versions --layer-name java-example-extension --max-items 1 \
   --no-paginate --query 'LayerVersions[0].LayerVersionArn' --output text)
   ```
 
@@ -89,7 +88,7 @@ To deploy the extension using the bash script do the following:
 * Execute run.sh - Run the following command `run.sh <<extension-name>> <<function-name>>` with the extension name and function name as parameters.
 
   ```
-  java-example-extension$ ./run.sh java-extension blank-java
+  java-example-extension$ ./run.sh java-example-extension blank-java
   ```   
 
 This script uses AWS CLI to perform the following:
