@@ -20,6 +20,7 @@ In this repository you'll find a number of different sample projects and demos t
 * [Extension in Go](go-example-extension/)
 * [Extension in Python](python-example-extension/)
 * [Extension in Node.js](nodejs-example-extension/)
+* [Extension in Java 11](java-example-extension/)
 * [Logs API extension in Go](go-example-logs-api-extension/)
 * [Logs API extension in Python](python-example-logs-api-extension/)
 * [Logs API extension in Python for Elasticsearch](python-example-elasticsearch-extension/)
@@ -29,7 +30,6 @@ In this repository you'll find a number of different sample projects and demos t
 * [Wrapper script in Bash](bash-example-wrapper/)
 * [Wrapper script in Python](python-example-wrapper/)
 * [Wrapper script in Ruby](ruby-example-wrapper/)
-
 
 ## Security
 
