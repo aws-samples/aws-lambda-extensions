@@ -1,0 +1,10 @@
+{
+  "name": "nodejs-example-logs-api-extension",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "2.806.0",
+    "node-fetch": "^2.6.1"
+  }
+}
