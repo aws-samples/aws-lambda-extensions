@@ -42,7 +42,7 @@ Resources:
     Properties:
       LayerName: extensions-layer
       Description: Layer containing extension(s)
-      ContentUri: extensionssrc/
+      ContentUri: extensionssrc/extensions
       LicenseInfo: 'Available under the MIT-0 license.'
       RetentionPolicy: Delete
 ##########################################################################
