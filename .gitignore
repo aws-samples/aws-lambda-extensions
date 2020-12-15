@@ -211,3 +211,12 @@ $RECYCLE.BIN/
 #AWS SAM
 
 samconfig.toml
+
+# Java
+java-*/target/
+java-*/.classpath
+java-*/**/*.jar
+
+# VSCode
+*/.project
+*/.settings/
