@@ -12,8 +12,8 @@ mvn clean install
 rm -Rf extensions/*.jar
 rm -Rf extensions/*.zip
 mv target/java-example-extension-1.0-SNAPSHOT.jar extensions
-chmod +x extensions/java-example-extension
 cd extensions
+chmod +x extensions/java-example-extension
 zip -r extension.zip .
 
 # Push extension
