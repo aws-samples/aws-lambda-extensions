@@ -1,0 +1,15 @@
+#Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#SPDX-License-Identifier: MIT-0
+parameters:
+  region: us-west-2
+  names:
+    - Parameter1
+dynamodb:
+  - region: us-west-2
+    table: DynamoDbTable
+    hashkey: pKey
+    hashkeytype: S
+    hashkeyvalue: pKey1
+    sortkey: sKey
+    sortkeytype: S
+    sortkeyvalue: sKey1

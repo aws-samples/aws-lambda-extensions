@@ -211,3 +211,7 @@ $RECYCLE.BIN/
 #AWS SAM
 
 samconfig.toml
+java-example-extension/target/*
+cache-extension-demo/.idea/*
+cache-extension-demo/bin/*
+cache-extension-demo/go.mod
