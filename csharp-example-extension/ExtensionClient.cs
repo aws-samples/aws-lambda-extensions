@@ -46,6 +46,9 @@ namespace example_extension
 
         #region Environment variable names
 
+        /// <summary>
+        /// Environment variable that holds server name and port number for Extension API endpoints
+        /// </summary>
         private const string LambdaRuntimeApiAddress = "AWS_LAMBDA_RUNTIME_API";
 
         #endregion
@@ -61,11 +64,36 @@ namespace example_extension
 
         #region Constructor and readonly variables
 
+        /// <summary>
+        /// Http client instance
+        /// </summary>
+        /// <remarks>This is an IDisposable object that must be properly disposed of,
+        /// thus <see cref="ExtensionClient"/> implements <see cref="IDisposable"/> interface too.</remarks>
         private readonly HttpClient httpClient = new HttpClient();
+
+        /// <summary>
+        /// Extension name, calculated from the current executing assembly name
+        /// </summary>
         private readonly string extensionName = Assembly.GetExecutingAssembly().GetName().Name;
+
+        /// <summary>
+        /// Extension registration URL
+        /// </summary>
         private readonly Uri registerUrl;
+
+        /// <summary>
+        /// Next event long poll URL
+        /// </summary>
         private readonly Uri nextUrl;
+
+        /// <summary>
+        /// Extension initialization error reporting URL
+        /// </summary>
         private readonly Uri initErrorUrl;
+
+        /// <summary>
+        /// Extension shutdown error reporting URL
+        /// </summary>
         private readonly Uri shutdownErrorUrl;
 
         /// <summary>
@@ -92,32 +120,46 @@ namespace example_extension
         #region Public interface
 
         /// <summary>
-        /// 
+        /// Extension registration and event loop handling
         /// </summary>
-        /// <param name="onInit"></param>
-        /// <param name="onInvoke"></param>
-        /// <param name="onShutdown"></param>
-        /// <returns></returns>
+        /// <param name="onInit">Optional lambda extension that is invoked when extension has been successfully registered with AWS Lambda Extension API.
+        /// This function will be called exactly once if it is defined and ignored if this parameter is null.</param>
+        /// <param name="onInvoke">Optional lambda extension that is invoked every time AWS Lambda Extension API reports a new <see cref="ExtensionEvent.INVOKE"/> event.
+        /// This function will be called once for each <see cref="ExtensionEvent.INVOKE"/> event during the entire lifetime of AWS Lambda function instance.</param>
+        /// <param name="onShutdown">Optional lambda extension that is invoked when extension receives <see cref="ExtensionEvent.SHUTDOWN"/> event from AWS LAmbda Extension API.
+        /// This function will be called exactly once if it is defined and ignored if this parameter is null.</param>
+        /// <returns>Awaitable void</returns>
+        /// <remarks>Unhandled exceptions thrown by <paramref name="onInit"/> and <paramref name="onShutdown"/> functions will be reported to AWS Lambda API with
+        /// <c>/init/error</c> and <c>/exit/error</c> calls, in any case <see cref="ProcessEvents"/> will immediately exit after reporting the error.
+        /// Unhandled <paramref name="onInvoke"/> exceptions are logged to console and ignored, so that extension execution can continue.
+        /// </remarks>
         public async Task ProcessEvents(Func<string, Task> onInit = null, Func<string, Task> onInvoke = null, Func<string, Task> onShutdown = null)
         {
+            // Register extension with AWS Lambda Extension API to handle both INVOKE and SHUTDOWN events
             await RegisterExtensionAsync(ExtensionEvent.INVOKE, ExtensionEvent.SHUTDOWN);
 
+            // If onInit function is defined, invoke it and report any unhandled exceptions
             if (!await SafeInvoke(onInit, this.Id, ex => ReportErrorAsync(this.initErrorUrl, "Fatal.Unhandled", ex))) return;
 
+            // loop till SHUTDOWN event is received
             var hasNext = true;
             while (hasNext)
             {
+                // get the next event type and details
                 var (type, payload) = await GetNextAsync();
 
                 switch (type)
                 {
                     case ExtensionEvent.INVOKE:
+                        // invoke onInit function if one is defined and log unhandled exceptions
+                        // event loop will continue even if there was an exception
                         await SafeInvoke(onInvoke, payload, onException: ex => {
                             Console.WriteLine("Invoke handler threw an exception");
                             return Task.CompletedTask;
                         });
                         break;
                     case ExtensionEvent.SHUTDOWN:
+                        // terminate the loop, invoke onShutdown function if there is any and report any unhandled exceptions to AWS Extension API
                         hasNext = false;
                         await SafeInvoke(onShutdown, this.Id, ex => ReportErrorAsync(this.shutdownErrorUrl, "Fatal.Unhandled", ex));
                         break;
