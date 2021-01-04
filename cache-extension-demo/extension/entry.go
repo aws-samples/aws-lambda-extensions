@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+// Constants definition
 const (
 	Parameters            = "parameters"
 	Dynamodb              = "dynamodb"
@@ -27,6 +28,7 @@ type CacheConfig struct {
 
 var cacheConfig = CacheConfig{}
 
+// Initialize cache and start the background process to refresh cache
 func InitCacheExtensions() {
 	// Read the cache config file
 	data := LoadConfigFile()
@@ -48,6 +50,7 @@ func InitCacheExtensions() {
 	}
 }
 
+// Background process to refresh cache
 func RefreshCache(timeOut string) {
 	timeOutInMinutes, err := time.ParseDuration(timeOut)
 	if err != nil {
@@ -63,6 +66,7 @@ func RefreshCache(timeOut string) {
 	}
 }
 
+// Initialize individual cache
 func InitCache() {
 	plugins.InitParameterCache(cacheConfig.Parameters)
 	plugins.InitDynamodbCache(cacheConfig.Dynamodb)

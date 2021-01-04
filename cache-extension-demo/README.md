@@ -38,9 +38,9 @@ Create a new parameter using the following command
 
 ```bash
 aws ssm put-parameter \
---name "Parameter1" \
---type "String" \
---value "Parameter_value"
+    --name "Parameter1" \
+    --type "String" \
+    --value "Parameter_value"
 ```
 
 ### DynamoDB
@@ -95,9 +95,9 @@ Ensure that you have aws-cli v2 for the commands below.
 Publish a new layer using the `extension.zip`. The output of the following command should provide you a layer arn.
 ```bash
 aws lambda publish-layer-version \
- --layer-name "cache-extension-demo" \
- --region <use your region> \
- --zip-file  "fileb://extension.zip"
+    --layer-name "cache-extension-demo" \
+    --region <use your region> \
+    --zip-file  "fileb://extension.zip"
 ```
 Note the LayerVersionArn that is produced in the output.
 eg. `"LayerVersionArn": "arn:aws:lambda:<region>:123456789012:layer:<layerName>:1"`
@@ -108,14 +108,26 @@ Add the newly created layer version to a Lambda function.
 
 >Note: Make sure to have`'AmazonDynamoDBFullAccess'` & `'AmazonSSMFullAccess'` IAM policies assigned to the IAM role associated with the Lambda function
 
+Here is the AWS CLI command that can update the layers on the existing AWS Lambda function
+
+```bash
+aws lambda update-function-configuration \
+  --function-name <<function-name>> \
+  --layers $(aws lambda list-layer-versions --layer-name cache-extension-demo \
+  --max-items 1 --no-paginate --query 'LayerVersions[0].LayerVersionArn' \
+  --output text)
+```
+
+>Note: Make sure to replace `function-name` with the actual lambda function name
+
 ## Function Invocation and Extension Execution
 You can invoke the Lambda function using the following CLI command
 ```bash
 aws lambda invoke \
- --function-name "<<function-name>>" \
- --payload '{"payload": "hello"}' /tmp/invoke-result \
- --cli-binary-format raw-in-base64-out \
- --log-type Tail
+    --function-name "<<function-name>>" \
+    --payload '{"payload": "hello"}' /tmp/invoke-result \
+    --cli-binary-format raw-in-base64-out \
+    --log-type Tail
 ```
 >Note: Make sure to replace `function-name` with the actual lambda function name
 

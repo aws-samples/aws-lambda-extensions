@@ -15,6 +15,7 @@ func Start(port string) {
 	go startHTTPServer(port)
 }
 
+// Method that responds back with the cached values
 func startHTTPServer(port string) {
 	router := mux.NewRouter()
 	router.HandleFunc("/{cacheType}/{key}",

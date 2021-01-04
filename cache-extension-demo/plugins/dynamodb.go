@@ -85,7 +85,6 @@ func InitDynamodbCache(DynamodbConfig []DynamodbConfiguration) {
 			}
 
 			dynamoDbCache[key] = string(jsonData)
-			println("Key name %s - %s", key, string(jsonData))
 		} else {
 			println("HashKey not available so caching will not be enabled for %s", dynamodbConfig.HashKey)
 		}
