@@ -217,6 +217,11 @@ java-*/target/
 java-*/.classpath
 java-*/**/*.jar
 
+# C#
+csharp-*/bin/
+csharp-*/obj/
+csharp-*/*.zip
+
 # VSCode
 */.project
 */.settings/
