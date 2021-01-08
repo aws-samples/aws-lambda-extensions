@@ -16,7 +16,7 @@ Project files and folders:
 - [.NET Core SDK](https://dotnet.microsoft.com/download) - 3.1 or a later version with 3.1 targeting pack installed.
 - [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) - version 2.1.14 or newer.
 - Since this is an external .NET Core extension, we would require a lambda function with .NET Core 3.1 runtime published to test this extension. For more information on publishing a blank C# lambda function please [refer here](https://github.com/awsdocs/aws-lambda-developer-guide/tree/master/sample-apps/blank-csharp).
-- Bash shell with `zip` command support. Linux and macOS operating systems have that shell availalbe by default (although the macOS has recently switched to ZSH default shell, Bash is still available for Catalina and Big Sur anyway). Windows 10 users can install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) or just use Git Bash, which is included with [Git for Windows](https://gitforwindows.org/) installation package.
+- Bash shell with `zip` command support. Linux and macOS operating systems have that shell available by default (although the macOS has recently switched to ZSH default shell, Bash is still available for Catalina and Big Sur anyway). Windows 10 users can install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) or just use Git Bash, which is included with [Git for Windows](https://gitforwindows.org/) installation package.
 
 The following configuration setting must be set in [AWS CLI configuration file](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) (`~/.aws/config`), so that AWS CLI v2 will use backward compatibility with the AWS CLI version 1 behavior where binary values must be passed literally:
 
@@ -51,7 +51,7 @@ cd aws-lambda-extensions/csharp-example-extension
 dotnet publish -c Release
 ```
 
-- Make sure that `extensions/dotnet-example-extension` has executable bit set and set it if needed, otherwise Lambda intializtion will fail with `PermissionDenied` error (see Troubleshooting section for details):
+- Make sure that `extensions/dotnet-example-extension` has executable bit set and set it if needed, otherwise Lambda initialization will fail with `PermissionDenied` error (see Troubleshooting section for details):
 
 ```bash
 chmod +x extensions/dotnet-example-extension
