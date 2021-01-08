@@ -1,10 +1,13 @@
 # Example Extension in C#.NET
 
+The provided code sample demonstrates how to get a basic extension written in C# up and running.
+
+> Note: **This extension requires .NET Core 3.1 (C#/PowerShell) runtime to be present in the Lambda execution environment of your function.**
+
 ## Project structure
 
 Project files and folders:
 
-- `csharp-example-extension.sln` - Visual Studio solution file. This is an optional file which is not required for .NET CLI and VSCode editor.
 - `csharp-example-extension.csproj` - .NET Core project file, which is mandatory for .NET Core build process. It defines `<LangVersion>latest</LangVersion>`, so that the latest C# language features, like [async Main](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-7.1/async-main) could be used.
 - `Program.cs` - main entry point for this extension.
 - `ExtensionClient.cs` - Lambda Extension API client implementation.
