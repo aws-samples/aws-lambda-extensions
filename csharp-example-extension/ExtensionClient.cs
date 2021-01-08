@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace example_extension
+namespace csharp_example_extension
 {
     /// <summary>
     /// Lambda Extension API client

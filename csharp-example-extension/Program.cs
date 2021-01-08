@@ -4,7 +4,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace example_extension
+namespace csharp_example_extension
 {
     class Program
     {  

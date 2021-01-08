@@ -4,12 +4,12 @@
 
 Project files and folders:
 
-- `dotnet-example-extension.sln` - Visual Studio solution file. This is an optional file which is not required for .NET CLI and VSCode editor.
-- `dotnet-example-extension.csproj` - .NET Core project file, which is mandatory for .NET Core build process. It defines `<LangVersion>latest</LangVersion>`, so that the latest C# language features, like [async Main](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-7.1/async-main) could be used.
+- `csharp-example-extension.sln` - Visual Studio solution file. This is an optional file which is not required for .NET CLI and VSCode editor.
+- `csharp-example-extension.csproj` - .NET Core project file, which is mandatory for .NET Core build process. It defines `<LangVersion>latest</LangVersion>`, so that the latest C# language features, like [async Main](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-7.1/async-main) could be used.
 - `Program.cs` - main entry point for this extension.
 - `ExtensionClient.cs` - Lambda Extension API client implementation.
 - `ExtensionEvent.cs` - Event types enumerable, so that the rest of the code can work with enum values, rather than string constants.
-- `extensions/dotnet-example-extension` - Bash script that must be deployed to `opt/extensions` folder as an executable file (see manual deployment steps below for details).
+- `extensions/csharp-example-extension` - Bash script that must be deployed to `opt/extensions` folder as an executable file (see manual deployment steps below for details).
 
 ## Requirements
 
@@ -37,10 +37,10 @@ cd aws-lambda-extensions/csharp-example-extension
 
 - make sure that `csharp-example-extension` is your current folder and `run.sh` script has executable bit set - `ls -l run.sh` output should start with `-rwxr-xr-x` permissions mask.
 - make `run.sh` executable with `chmod +x run.sh` if needed.
-- assuming that demo C# Lambda function has already been deployed to the current AWS account and its name is `test-dotnet`, execute the following command to build the extension and deploy it to the current AWS account as a Lambda layer, named `dotnet-example-extension`:
+- assuming that demo C# Lambda function has already been deployed to the current AWS account and its name is `test-dotnet`, execute the following command to build the extension and deploy it to the current AWS account as a Lambda layer, named `csharp-example-extension`:
 
 ```bash
-./run.sh dotnet-example-extension test-dotnet
+./run.sh csharp-example-extension test-dotnet
 ```
 
 ### Option 2: Step-by-step manual deployment
@@ -51,10 +51,10 @@ cd aws-lambda-extensions/csharp-example-extension
 dotnet publish -c Release
 ```
 
-- Make sure that `extensions/dotnet-example-extension` has executable bit set and set it if needed, otherwise Lambda initialization will fail with `PermissionDenied` error (see Troubleshooting section for details):
+- Make sure that `extensions/csharp-example-extension` has executable bit set and set it if needed, otherwise Lambda initialization will fail with `PermissionDenied` error (see Troubleshooting section for details):
 
 ```bash
-chmod +x extensions/dotnet-example-extension
+chmod +x extensions/csharp-example-extension
 ```
 
 - Change your current folder to the publish destination folder:
@@ -72,7 +72,7 @@ zip -rm ./deploy.zip *
 - Define Lambda function and extension name variables, so that they can be easily referenced later. Make sure that `test-dotnet` Lambda function has already been published to the current AWS account:
 
 ```bash
-EXTENSION_NAME="dotnet-example-extension"
+EXTENSION_NAME="csharp-example-extension"
 LAMBDA_FUNCTION="test-dotnet"
 ```
 
@@ -85,7 +85,7 @@ aws lambda publish-layer-version \
   --zip-file "fileb://deploy.zip"
 ```
 
-- Update `test-dotnet` Lambda function to use `dotnet-example-extension` layer
+- Update `test-dotnet` Lambda function to use `csharp-example-extension` layer
 
 ```bash
 aws lambda update-function-configuration \
@@ -113,11 +113,11 @@ All logs can be fund in `/aws/lambda/test-dotnet` Cloudwatch group - both Lambda
 
 #### Symptoms
 
-> EXTENSION Name: dotnet-example-extension  State: LaunchError  Events: []  Error Type: PermissionDenied
+> EXTENSION Name: csharp-example-extension  State: LaunchError  Events: []  Error Type: PermissionDenied
 
 #### Resolution
 
 Validate that execution bit has been properly set on the extension shell script.
 For example `ls -la extensions` output should look like (notice `x` bit set):
 
-> -rwxr-xr-x   1 user  group  289 Dec 22 15:16 dotnet-example-extension
+> -rwxr-xr-x   1 user  group  289 Dec 22 15:16 csharp-example-extension

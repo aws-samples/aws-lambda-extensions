@@ -4,4 +4,4 @@
 
 # No additional configuration is required for .NET Core extension, since it is self-sufficient
 echo "Launching custom extension ..."
-dotnet /opt/dotnet-example-extension.dll
+dotnet /opt/csharp-example-extension.dll
