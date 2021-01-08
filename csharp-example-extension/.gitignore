@@ -30,3 +30,6 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+
+# No need for sln file for this project
+*.sln
