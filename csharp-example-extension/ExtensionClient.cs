@@ -74,7 +74,7 @@ namespace csharp_example_extension
         /// <summary>
         /// Extension name, calculated from the current executing assembly name
         /// </summary>
-        private readonly string extensionName = Assembly.GetExecutingAssembly().GetName().Name;
+        private readonly string extensionName;
 
         /// <summary>
         /// Extension registration URL
@@ -99,8 +99,10 @@ namespace csharp_example_extension
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExtensionClient()
+        public ExtensionClient(string extensionName)
         {
+            this.extensionName = extensionName ?? throw new ArgumentNullException(nameof(extensionName), "Extension name cannot be null");
+            
             // Set infinite timeout so that underlying connection is kept alive
             this.httpClient.Timeout = Timeout.InfiniteTimeSpan;
             // Get Extension API service base URL from the environment variable

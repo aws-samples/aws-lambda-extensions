@@ -2,6 +2,9 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
-# No additional configuration is required for .NET Core extension, since it is self-sufficient
-echo "Launching custom extension ..."
-dotnet /opt/csharp-example-extension.dll
+# extension name for registration must match exactly this script's name, otherwise registration will fail
+LAMBDA_EXTENSION_NAME="$(basename $0)"
+echo "Launching $LAMBDA_EXTENSION_NAME extension ..."
+# passing extension name as a mandatory argument instead of environemnt variable in order to avoid exporting that variable
+# can lead lead to a name collision with other extensions and/or Lambda Environment settings
+dotnet /opt/csharp-example-extension.dll "$LAMBDA_EXTENSION_NAME"

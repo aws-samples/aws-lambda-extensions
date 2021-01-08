@@ -10,7 +10,14 @@ namespace csharp_example_extension
     {  
         static async Task Main(string[] args)
         {
-            using var client = new ExtensionClient();
+            if(1 != args.Length || string.IsNullOrWhiteSpace(args[0]))
+            {
+                throw new ArgumentException("There must be a single non-empty extension name parameter provided!");
+            }
+
+            var extensionName = args[0];
+
+            using var client = new ExtensionClient(extensionName);
 
             // ProcessEvents will loop internally until SHUTDOWN event is received
             await client.ProcessEvents(
