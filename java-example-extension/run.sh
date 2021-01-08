@@ -8,13 +8,10 @@ LAMBDA_FUNCTION=$2
 # Build artifacts
 mvn clean install
 
-# Perform cleanup & create zip
-rm -Rf extensions/*.jar
-rm -Rf extensions/*.zip
-mv target/java-example-extension-1.0-SNAPSHOT.jar extensions
-cd extensions
+# Create zip
 chmod +x extensions/java-example-extension
-zip -r extension.zip .
+zip extension.zip -j target/java-example-extension-1.0-SNAPSHOT.jar
+zip extension.zip extensions/*
 
 # Push extension
 aws lambda publish-layer-version --layer-name "${EXTENSION_NAME}" --zip-file "fileb://extension.zip"
@@ -24,5 +21,3 @@ aws lambda update-function-configuration \
   --function-name ${LAMBDA_FUNCTION} --layers $(aws lambda list-layer-versions --layer-name ${EXTENSION_NAME} \
     --max-items 1 --no-paginate --query 'LayerVersions[0].LayerVersionArn' \
     --output text)
-
-cd -

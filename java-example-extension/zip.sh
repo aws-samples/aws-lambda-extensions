@@ -3,12 +3,7 @@
 # Build artifacts
 mvn clean install
 
-# Perform cleanup & create zip
-rm -Rf extensions/*.jar
-rm -Rf extensions/*.zip
-mv target/java-example-extension-1.0-SNAPSHOT.jar extensions
-cd extensions
+# Create zip
 chmod +x extensions/java-example-extension
-zip -r extension.zip .
-mv extension.zip ../
-cd -
+zip extension.zip -j target/java-example-extension-1.0-SNAPSHOT.jar
+zip extension.zip extensions/*
