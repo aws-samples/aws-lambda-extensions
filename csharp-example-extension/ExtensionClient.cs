@@ -156,7 +156,7 @@ namespace csharp_example_extension
                         // invoke onInit function if one is defined and log unhandled exceptions
                         // event loop will continue even if there was an exception
                         await SafeInvoke(onInvoke, payload, onException: ex => {
-                            Console.WriteLine("Invoke handler threw an exception");
+                            Console.WriteLine($"[{this.extensionName}] Invoke handler threw an exception");
                             return Task.CompletedTask;
                         });
                         break;
@@ -203,7 +203,7 @@ namespace csharp_example_extension
             if (!response.IsSuccessStatusCode)
             {
                 // log details
-                Console.WriteLine($"Error response received for registration request: {await response.Content.ReadAsStringAsync()}");
+                Console.WriteLine($"[{this.extensionName}] Error response received for registration request: {await response.Content.ReadAsStringAsync()}");
                 // throw an unhandled exception, so that extension is terminated by Lambda runtime
                 response.EnsureSuccessStatusCode();
             }
@@ -255,7 +255,7 @@ namespace csharp_example_extension
             using var response = await this.httpClient.PostAsync(url, content);
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Error response received for {url.PathAndQuery}: {await response.Content.ReadAsStringAsync()}");
+                Console.WriteLine($"[{this.extensionName}] Error response received for {url.PathAndQuery}: {await response.Content.ReadAsStringAsync()}");
                 response.EnsureSuccessStatusCode();
             }
         }
