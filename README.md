@@ -15,6 +15,7 @@ In this repository you'll find a number of different sample projects and demos t
 
 * [AWS AppConfig extension demo](awsappconfig-extension-demo/)
 * [Custom runtime extension demo](custom-runtime-extension-demo/)
+* [Cache Extension demo](cache-extension-demo/)
 * [Logs to Amazon S3 extension demo: zip archive](s3-logs-extension-demo-zip-archive/)
 * [Logs to Amazon S3 extension demo: container image ](s3-logs-extension-demo-container-image/)
 * [Extension in Go](go-example-extension/)
@@ -22,7 +23,6 @@ In this repository you'll find a number of different sample projects and demos t
 * [Extension in Node.js](nodejs-example-extension/)
 * [Extension in Java 11](java-example-extension/)
 * [Extension in C#.NET](csharp-example-extension/)
-* [Cache Extension demo](cache-extension-demo/)
 * [Logs API extension in Go](go-example-logs-api-extension/)
 * [Logs API extension in Python](python-example-logs-api-extension/)
 * [Logs API extension in Python for Elasticsearch](python-example-elasticsearch-extension/)

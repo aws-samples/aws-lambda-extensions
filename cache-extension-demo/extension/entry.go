@@ -17,7 +17,7 @@ const (
 	Parameters = "parameters"
 	Dynamodb   = "dynamodb"
 	FileName                 = "/var/task/config.yaml"
-	InitializeCacheOnStartup = "INIT_EXT_CACHE_ON_STARTUP"
+	InitializeCacheOnStartup = "CACHE_EXTENSION_INIT_STARTUP"
 )
 
 // Struct for storing CacheConfiguration
@@ -53,14 +53,14 @@ func InitCache() {
 	if initCache != "" {
 		cacheInBool, err := strconv.ParseBool(initCache)
 		if err != nil {
-			panic(plugins.PrintPrefix + "Error while converting INIT_EXT_CACHE_ON_STARTUP env variable " +
+			panic(plugins.PrintPrefix + "Error while converting CACHE_EXTENSION_INIT_STARTUP env variable " +
 				initCache)
 		} else {
 			initCacheInBool = cacheInBool
 		}
 	}
 
-	// Initialize map and load data from individual services if "INITIALIZE_EXTENSION_CACHE_ON_STARTUP" = true
+	// Initialize map and load data from individual services if "CACHE_EXTENSION_INIT_STARTUP" = true
 	plugins.InitParameters(cacheConfig.Parameters, initCacheInBool)
 	plugins.InitDynamodb(cacheConfig.Dynamodb, initCacheInBool)
 }

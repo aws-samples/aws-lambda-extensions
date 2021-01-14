@@ -225,7 +225,3 @@ csharp-*/*.zip
 # VSCode
 */.project
 */.settings/
-cache-extension-demo/bin/*
-cache-extension-demo/.idea/*
-*/go.sum
-run.sh

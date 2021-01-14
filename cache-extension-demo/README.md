@@ -12,8 +12,8 @@ Here is how it works:
 - Uses `config.yaml` defined part of the lambda function to determine the items that needs to be cached
 - All the data are cached in memory before the request gets handled to the lambda function. So no cold start problems
 - Starts a local HTTP server at port `3000` that replies to request for reading items from the cache depending upon path variables
-- Uses `"CACHE_EXTENSION_TIMEOUT"` Lambda environment variable to let users define cache refresh interval (defined based on Go time format, ex: 30s, 3m, etc)
-- Uses `"INIT_EXT_CACHE_ON_STARTUP"` Lambda environment variable used to specify whether to load all items specified in `"cache.yml"` into cache part of extension startup (takes boolean value, ex: true and false)
+- Uses `"CACHE_EXTENSION_TTL"` Lambda environment variable to let users define cache refresh interval (defined based on Go time format, ex: 30s, 3m, etc)
+- Uses `"CACHE_EXTENSION_INIT_STARTUP"` Lambda environment variable used to specify whether to load all items specified in `"cache.yml"` into cache part of extension startup (takes boolean value, ex: true and false)
 
 Here are some advantages of having the cache layer part of Lambda extension instead of having it inside the function
 - Reuse the code related to cache in multiple Lambda functions

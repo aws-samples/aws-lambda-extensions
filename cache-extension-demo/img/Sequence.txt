@@ -1,9 +1,9 @@
 title Extension Init & Reading data from cache 
 
 Extension->Lambda: Read "config.yaml" from "/var/task" to get \nthe list of items that needs to be cached
-Extension->Parameter Store: Initialize cache map and fetch all \nparameters listed in config.yaml if \nINIT_EXT_CACHE_ON_STARTUP=true
+Extension->Parameter Store: Initialize cache map and fetch all \nparameters listed in config.yaml if \nCACHE_EXTENSION_INIT_STARTUP=true
 Extension-->Extension: Initialization complete
-Extension->DynamoDB: Initialize cache map and fetch all \nrecords listed in config.yaml if \n INIT_EXT_CACHE_ON_STARTUP=true
+Extension->DynamoDB: Initialize cache map and fetch all \nrecords listed in config.yaml if \n CACHE_EXTENSION_INIT_STARTUP=true
 Extension-->Extension: Initialization complete
 Extension-->Extension: Start a HTTP server
 Lambda->Extension: HTTP Get:/parameters/<name> to read from parameters cache

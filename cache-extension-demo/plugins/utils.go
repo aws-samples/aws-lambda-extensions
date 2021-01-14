@@ -10,7 +10,7 @@ import (
 
 // Lambda environment variable for defining TTL
 const (
-	CacheTimeOut = "CACHE_EXTENSION_TIMEOUT"
+	CacheTimeOut = "CACHE_EXTENSION_TTL"
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 	PrintPrefix   = fmt.Sprintf("[%s] ", ExtensionName)
 )
 
-// Struct for storing cache data with expiry timestamp [time.Now() + CACHE_EXTENSION_TIMEOUT]
+// Struct for storing cache data with expiry timestamp [time.Now() + CACHE_EXTENSION_TTL]
 type CacheData struct {
 	Data        string
 	CacheExpiry time.Time
@@ -29,7 +29,7 @@ func IsExpired(cacheExpiry time.Time) bool {
 	return cacheExpiry.Before(time.Now())
 }
 
-// Return cache expiry timestamp based on "time.Now() + CACHE_EXTENSION_TIMEOUT"
+// Return cache expiry timestamp based on "time.Now() + CACHE_EXTENSION_TTL"
 func GetCacheExpiry() time.Time {
 	// Refresh cache is required via environment variable
 	timeOut := os.Getenv(CacheTimeOut)
@@ -39,7 +39,7 @@ func GetCacheExpiry() time.Time {
 
 	timeOutInMinutes, err := time.ParseDuration(timeOut)
 	if err != nil {
-		panic("Error while converting CACHE_EXTENSION_TIMEOUT env variable " + timeOut)
+		panic("Error while converting CACHE_EXTENSION_TTL env variable " + timeOut)
 	}
 
 	return time.Now().Add(timeOutInMinutes)
