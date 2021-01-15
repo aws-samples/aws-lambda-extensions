@@ -51,7 +51,7 @@ Once the build is succesful, deploy the template using  
 sam deploy
 
 ```
-Option 2: AWS CLI 
+### Option 2: AWS CLI 
 
 ### Parameter Store
 Create a new parameter using the following command
