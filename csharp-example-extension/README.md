@@ -70,32 +70,24 @@ This type of deployment is compatible with any Lambda function runtime.
 chmod +x extensions/*
 ```
 
-- Publish .NET Core project with `Release` configuration and targeting a specific framework. `csharp-example-extension.csproj` file contains all necessary configuration for building and packaging the result if needed. This command (see below) will download all necessary NuGet packages, referenced by the project, build the binaries using `Release` configuration settings and publish the result to the appropriate subfolder. Please, refer to [dotnet publish](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish) documentation for details and additional command line options.
+- Publish .NET Core project with `Release` configuration and targeting a specific framework. `csharp-example-extension.csproj` file contains all necessary configuration for building and packaging the result if needed. This command (see below) will download all necessary NuGet packages, referenced by the project, build the binaries using `Release` configuration settings and publish the result to `bin/publish` folder. Please, refer to [dotnet publish](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish) documentation for details and additional command line options.
 
 #### Build .NET Core 3.1 dependent extension
 
 ```bash
-dotnet publish -c Release -f netcoreapp3.1
+dotnet publish -c Release -f netcoreapp3.1 -o bin/publish
 ```
 
 #### Build self-contained extension using .NET Core 5.0 runtime
 
 ```bash
-dotnet publish -c Release -f net5.0
+dotnet publish -c Release -f net5.0 -o bin/publish
 ```
 
 - Change your current folder to the publish destination folder:
 
-#### If .NET Core 3.1 dependent extension path
-
 ```bash
-cd bin/Release/netcoreapp3.1/publish
-```
-
-#### If .NET Core 5.0 self-contained extension path
-
-```bash
-cd bin/Release/net5.0/linux-x64/publish
+cd bin/publish
 ```
 
 - Move all publish results to `deploy.zip` archive recursively:

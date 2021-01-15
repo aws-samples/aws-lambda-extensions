@@ -54,16 +54,16 @@ if [ "${SELF_CONTAINED}" = "true" ] ; then
     echo 'Building self-contained extension...'
     echo ''
 
-    dotnet publish -c Release -f net5.0
-    cd bin/Release/net5.0/linux-x64/publish
+    dotnet publish -c Release -f net5.0 -o bin/publish
+
 else
     echo 'Building .NET Core 3.1 dependent extension...'
     echo ''
 
-    dotnet publish -c Release -f netcoreapp3.1
-    cd bin/Release/netcoreapp3.1/publish
+    dotnet publish -c Release -f netcoreapp3.1 -o bin/publish
 fi
 
+cd bin/publish
 zip -rm ./deploy.zip *
 
 aws lambda publish-layer-version \
@@ -75,3 +75,4 @@ aws lambda update-function-configuration \
 	--max-items 1 --no-paginate --query 'LayerVersions[0].LayerVersionArn' \
 	--output text)
 
+cd -
