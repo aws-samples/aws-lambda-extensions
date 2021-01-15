@@ -34,6 +34,25 @@ reads cached items using HTTP server hosted inside the extension
 - AWS CLI needs to be installed in the local system, for more information click [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 
 ## Deploy
+
+One can quickly deploy the extension using SAM or using AWS CLI 
+
+### Option 1: SAM 
+
+In this SAM Deployment, we create a sample DynamoDB Table, and a sample Lambda function with the cache extensions attached as a layer. Lambda Extension is a Go executable, so it can be easily imported in any lambda function as a Layer. If you are new to SAM, you can quickly install SAM. Once you have SAM, Cache extension deployment involves two simple steps:
+
+First, we build all the dependencies   
+```
+cd SAM/ 
+sam build
+```
+Once the build is succesful, deploy the template using  
+```
+sam deploy
+
+```
+Option 2: AWS CLI 
+
 ### Parameter Store
 Create a new parameter using the following command
 
