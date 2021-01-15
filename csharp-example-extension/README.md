@@ -2,8 +2,6 @@
 
 The provided code sample demonstrates how to get a basic extension written in C# up and running.
 
-> Note: **This extension requires .NET Core 3.1 (C#/PowerShell) runtime to be present in the Lambda execution environment of your function.**
-
 ## Project structure
 
 Project files and folders:
@@ -12,11 +10,12 @@ Project files and folders:
 - `Program.cs` - main entry point for this extension.
 - `ExtensionClient.cs` - Lambda Extension API client implementation.
 - `ExtensionEvent.cs` - Event types enumerable, so that the rest of the code can work with enum values, rather than string constants.
-- `extensions/csharp-example-extension` - Bash script that must be deployed to `opt/extensions` folder as an executable file (see manual deployment steps below for details).
+- `extensions/csharp-example-extension` - Bash script that must be deployed to `opt/extensions` folder as an executable file (see manual deployment steps below for details). This script will be used for .NET Core 3.1 dependent deployment.
+- `extensions/csharp-example-extension-self-contained` - Bash script that must be deployed to `opt/extensions` folder as an executable file (see manual deployment steps below for details). This script will be used for self-contained deployment.
 
 ## Requirements
 
-- [.NET Core SDK](https://dotnet.microsoft.com/download) - 3.1 or a later version with 3.1 targeting pack installed.
+- [.NET Core SDK](https://dotnet.microsoft.com/download) - 5.0 or a later version with 3.1 targeting pack installed (if .NET Core 3.1 dependent deployment is used).
 - [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) - version 2.1.14 or newer.
 - Since this is an external .NET Core extension, we would require a lambda function with .NET Core 3.1 runtime published to test this extension. For more information on publishing a blank C# lambda function please [refer here](https://github.com/awsdocs/aws-lambda-developer-guide/tree/master/sample-apps/blank-csharp).
 - Bash shell with `zip` command support. Linux and macOS operating systems have that shell available by default (although the macOS has recently switched to ZSH default shell, Bash is still available for Catalina and Big Sur anyway). Windows 10 users can install [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) or just use Git Bash, which is included with [Git for Windows](https://gitforwindows.org/) installation package.
@@ -36,34 +35,67 @@ git clone https://github.com/aws-samples/aws-lambda-extensions.git
 cd aws-lambda-extensions/csharp-example-extension
 ```
 
-### Option 1: Use shell script to deploy the extension
+### Deployment options
+
+`csharp-example-extension.csproj` has all necessary configuration for deploying this extension as a self-contained executable or a .NET Core 3.1 dependent extension.
+Self-contained executable is built using .NET Core 5.0 targeting pack and does not require any runtime to be pre-installed for Lambda function, thus it is compatible with any Lambda functions (.NET, Java, NodeJS, etc.). All necessary .NET runtime libraries are packaged together with the extension, thus the result package is much larger, than the .NET runtime dependent package (10MB+ vs 10KB+).
+
+### Automated deployment: Use shell script to deploy the extension
 
 - make sure that `csharp-example-extension` is your current folder and `run.sh` script has executable bit set - `ls -l run.sh` output should start with `-rwxr-xr-x` permissions mask.
 - make `run.sh` executable with `chmod +x run.sh` if needed.
 - assuming that demo C# Lambda function has already been deployed to the current AWS account and its name is `test-dotnet`, execute the following command to build the extension and deploy it to the current AWS account as a Lambda layer, named `csharp-example-extension`:
 
+#### .NET Core 3.1 dependent extension
+
+> IMPORTANT: You will be able to attach this extension to .NET Core 3.1 Lambda functions only!!!
+
 ```bash
-./run.sh csharp-example-extension test-dotnet
+./run.sh -e csharp-example-extension -f test-dotnet
 ```
 
-### Option 2: Step-by-step manual deployment
+#### Self-contained extension
 
-- Publish .NET Core project with `Release` configuration. This command (see below) will download all necessary NuGet packages, referenced by the project, build the binaries using `Release` configuration settings and publish the result to `bin/Release/netcoreapp3.1/publish` subfolder. Please, refer to [dotnet publish](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish) documentation for details and additional command line options.
+This type of deployment is compatible with any Lambda function runtime.
 
 ```bash
-dotnet publish -c Release
+./run.sh -e csharp-example-extension -f test-dotnet -s
 ```
 
-- Make sure that `extensions/csharp-example-extension` has executable bit set and set it if needed, otherwise Lambda initialization will fail with `PermissionDenied` error (see Troubleshooting section for details):
+### Manual deployment
+
+- Make sure that all scripts in `extensions/*` folder has executable bit set and set it if needed, otherwise Lambda initialization will fail with `PermissionDenied` error (see Troubleshooting section for details):
 
 ```bash
-chmod +x extensions/csharp-example-extension
+chmod +x extensions/*
+```
+
+- Publish .NET Core project with `Release` configuration and targeting a specific framework. `csharp-example-extension.csproj` file contains all necessary configuration for building and packaging the result if needed. This command (see below) will download all necessary NuGet packages, referenced by the project, build the binaries using `Release` configuration settings and publish the result to the appropriate subfolder. Please, refer to [dotnet publish](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish) documentation for details and additional command line options.
+
+#### Build .NET Core 3.1 dependent extension
+
+```bash
+dotnet publish -c Release -f netcoreapp3.1
+```
+
+#### Build self-contained extension using .NET Core 5.0 runtime
+
+```bash
+dotnet publish -c Release -f net5.0
 ```
 
 - Change your current folder to the publish destination folder:
 
+#### If .NET Core 3.1 dependent extension path
+
 ```bash
 cd bin/Release/netcoreapp3.1/publish
+```
+
+#### If .NET Core 5.0 self-contained extension path
+
+```bash
+cd bin/Release/net5.0/linux-x64/publish
 ```
 
 - Move all publish results to `deploy.zip` archive recursively:
@@ -72,18 +104,17 @@ cd bin/Release/netcoreapp3.1/publish
 zip -rm ./deploy.zip *
 ```
 
-- Define Lambda function and extension name variables, so that they can be easily referenced later. Make sure that `test-dotnet` Lambda function has already been published to the current AWS account:
+- Define Lambda function and extension name variables, so that they can be easily referenced later. Make sure that `test-dotnet` Lambda function has already been published to the current AWS account (it can be any other, non-.NET function im case of the self-contained extension):
 
 ```bash
 EXTENSION_NAME="csharp-example-extension"
 LAMBDA_FUNCTION="test-dotnet"
 ```
 
-- Publish extension archive as a new Lambda layer, limiting it to be compatible with .NET Core Lambda runtime only:
+- Publish extension archive as a new Lambda layer:
 
 ```bash
 aws lambda publish-layer-version \
-  --compatible-runtimes "dotnetcore3.1" \
   --layer-name "${EXTENSION_NAME}" \
   --zip-file "fileb://deploy.zip"
 ```

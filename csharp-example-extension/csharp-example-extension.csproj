@@ -1,19 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Common settings for all target frameworks and platforms -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <RootNamespace>csharp_example_extension</RootNamespace>
     <LangVersion>latest</LangVersion>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
+
+  <!-- Disable PDB file creation for Release configuration -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugSymbols>false</DebugSymbols>
     <DebugType>None</DebugType>
   </PropertyGroup>
-  <ItemGroup> 
-    <Content Include="extensions/**"> 
+
+  <!-- Include Lambda Extension hook script into the output. This step is unique for .NET 3.1, since .NET 5.0 will have to use another script and rename it -->
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' "> 
+    <Content Include="extensions/csharp-example-extension"> 
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
     </Content> 
   </ItemGroup>
+
+  <!-- This is .NET 5.0 specific - result should be published as a single self-contained file, so that it doesn't need .NET runtime to be preinstalled on the VM -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
+    <PublishTrimmed>true</PublishTrimmed>
+    <PublishSingleFile>true</PublishSingleFile>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+  </PropertyGroup>
+  <!-- Custom step for including csharp-example-extension-self-contained script into the package and renaming it -->
+  <Target Name="RenameExtensionHook" AfterTargets="Publish" Condition=" '$(TargetFramework)' == 'net5.0' ">
+    <Copy SourceFiles="extensions/csharp-example-extension-self-contained" DestinationFiles="$(PublishDir)/extensions/csharp-example-extension" OverwriteReadOnlyFiles="true" />
+  </Target>
 </Project>
