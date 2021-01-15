@@ -6,6 +6,7 @@ package plugins
 import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/private/util"
 	"github.com/aws/aws-sdk-go/service/ssm"
 )
 
@@ -53,7 +54,7 @@ func GetParameter(name string, region string, ssmsvc *ssm.SSM) string {
 		WithDecryption: aws.Bool(true),
 	})
 	if err != nil {
-		println(PrintPrefix, "Error while fetching parameter ", name, err)
+		println(PrintPrefix, "Error while fetching parameter ", name, util.PrettyPrint(err))
 		return ""
 	} else {
 
