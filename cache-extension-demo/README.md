@@ -49,7 +49,6 @@ sam build
 Once the build is succesful, deploy the template using  
 ```
 sam deploy
-
 ```
 ### Option 2: AWS CLI 
 
