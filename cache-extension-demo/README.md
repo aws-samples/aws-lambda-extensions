@@ -108,7 +108,8 @@ Add the newly created layer version to a Lambda function.
 - Make sure to have a `config.yaml` in the root of the lambda function's directory and updated with the correct region information. You can use the provided `config.yaml` in the the `example/` directory
 - Make sure to increase the default timeout to 2 mins and memory to 512 MB
 
->Note: Make sure to have`'AmazonDynamoDBReadOnlyAccess'` & `'AmazonSSMReadOnlyAccess'` IAM policies assigned to the IAM role associated with the Lambda function
+>Note: Make sure to have`'AmazonDynamoDBReadOnlyAccess'` & `'AmazonSSMReadOnlyAccess'` IAM policies assigned to the IAM role associated with the Lambda function.
+> If you are caching entries in secrets manager using /aws/reference/secretsmanager/<secret> then make sure to assign `'SecretsManagerReadWrite'` policy to the IAM role
 
 Here is the AWS CLI command that can update the layers on the existing AWS Lambda function
 
