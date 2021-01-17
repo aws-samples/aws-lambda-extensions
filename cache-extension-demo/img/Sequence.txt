@@ -6,7 +6,7 @@ Extension-->Extension: Initialization complete
 Extension->DynamoDB: Initialize cache map and fetch all \nrecords listed in config.yaml if \n CACHE_EXTENSION_INIT_STARTUP=true
 Extension-->Extension: Initialization complete
 Extension-->Extension: Start a HTTP server
-Lambda->Extension: HTTP Get:/parameters/<name> to read from parameters cache
+Lambda->Extension: HTTP Get:/parameters?name=<name> to read from parameters cache
 Extension-->Lambda: Check whether item exists in cache and not exired?\nIf yes return it or \nread it from parameter store, cache it and return it
-Lambda->Extension: HTTP Get:/dynamodb/<table><hashkey><rangekey> to read from dynamodb cache
+Lambda->Extension: HTTP Get:/dynamodb?name=<table><hashkey><rangekey> to read from dynamodb cache
 Extension-->Lambda: Check whether item exists in cache and not exired?\nIf yes return it or \nread it from Dynamodb, cache it and return it as JSON string

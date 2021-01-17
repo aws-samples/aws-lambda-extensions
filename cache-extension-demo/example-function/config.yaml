@@ -1,9 +1,9 @@
 #Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #SPDX-License-Identifier: MIT-0
 parameters:
-  - region: us-west-2
+  - region: us-east-1
     names:
-      - Parameter1
+      - /aws/reference/secretsmanager/abcsecret
 dynamodb:
   - table: DynamoDbTable
     hashkey: pKey

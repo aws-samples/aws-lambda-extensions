@@ -6,7 +6,7 @@ exports.handler = function(event, context, callback) {
     const options = {
         hostname: 'localhost',
         port: 3000,
-        path: '/dynamodb/DynamoDbTable-pKey1-sKey1',
+        path: '/dynamodb?name=DynamoDbTable-pKey1-sKey1',
         method: 'GET'
     }
 

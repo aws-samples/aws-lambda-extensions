@@ -18,10 +18,10 @@ func Start(port string) {
 // Method that responds back with the cached values
 func startHTTPServer(port string) {
 	router := mux.NewRouter()
-	router.HandleFunc("/{cacheType}/{key}",
+	router.Path("/{cacheType}").Queries("name", "{name}").HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			vars := mux.Vars(r)
-			value := extension.RouteCache(vars["cacheType"], vars["key"])
+			value := extension.RouteCache(vars["cacheType"], vars["name"])
 
 			if len(value) != 0 {
 				_, _ = w.Write([]byte(value))
