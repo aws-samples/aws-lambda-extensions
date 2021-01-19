@@ -72,6 +72,7 @@ aws dynamodb put-item \
     --return-consumed-capacity TOTAL \
     --return-item-collection-metrics SIZE
 ```
+> Note: Dynamodb values are stored under the key generated using the format `<table><hyphen><hashkey><hyphen><rangekey>`
 
 ## Compile package and dependencies
 To run this example, you will need to ensure that your build architecture matches that of the Lambda execution environment by compiling with `GOOS=linux` and `GOARCH=amd64` if you are not running in a Linux environment.
