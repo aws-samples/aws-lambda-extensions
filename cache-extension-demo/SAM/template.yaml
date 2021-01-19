@@ -1,0 +1,135 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Sample AWS SAM App for Cache Extension demo application
+
+Globals:
+  Function:
+    Timeout: 10
+
+Parameters:
+  DatabaseName: 
+    Type: String
+    Description: Please enter a name for the database
+    Default: "DynamoDbTable"
+      
+Resources:
+
+  # Cache Extension - Lambda Function
+  SampleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../example-function/
+      Handler: index.handler
+      Runtime: nodejs12.x
+      Environment: 
+        Variables:
+          databaseName: 
+            Ref: DatabaseName
+      Layers: 
+        - !Ref CacheExtensionLayer
+      Policies:
+        - AWSLambdaExecute
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - ssm:GetParameter
+              Resource: '*'
+  
+  # Cache Extension - Lambda Layer
+  CacheExtensionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: ../bin/
+      CompatibleRuntimes:
+        - nodejs12.x
+        - python3.8
+        - java11
+        - go1.x
+      LayerName: Cache_Extension_Layer
+      Description: Caching layer for DynamoDB
+  
+  # Sample Dynamo DB Table 
+  DynamoDBTable: 
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 
+        Ref: DatabaseName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - 
+          AttributeName: "pKey"
+          AttributeType: "S"
+        - 
+          AttributeName: "sKey"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "pKey"
+          KeyType: "HASH"
+        - 
+          AttributeName: "sKey"
+          KeyType: "RANGE"
+
+
+  # Lambda IAM Role to put data to DynamoDB 
+  LambdaRole:
+    Type: AWS::IAM::Role
+    DependsOn: DynamoDBTable
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns: 
+        - "arn:aws:iam::aws:policy/AWSLambdaExecute"
+      Policies: 
+        - PolicyName: dynamodbAccessRole
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - dynamodb:PutItem
+              Resource: 
+                !Join
+                  - ''
+                  - - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/'
+                    - Ref: DatabaseName
+
+  # PutEntry Lambda function to put data to Dynamo DB Table 
+  DatabaseEntry:
+    Type: AWS::Lambda::Function
+    DependsOn: 
+      - DynamoDBTable
+      - LambdaRole
+    Properties:
+      Handler: index.handler
+      Role: 
+        Fn::GetAtt: [ LambdaRole , "Arn" ]
+      Runtime: nodejs12.x
+      Timeout: 15
+      Code: LambdaCode/
+
+  # Custom Resource to invoke the PutEntry Lambda function   
+  CustomResource:
+    Type: Custom::LambdaInvoker
+    DependsOn: DatabaseEntry
+    Properties:
+      ServiceToken: 
+        Fn::GetAtt: [ DatabaseEntry , "Arn" ]
+      DBName: 
+        Ref: DatabaseName
+
+Outputs:
+
+  SampleCacheExtensionsFunction:
+    Description: "Sample Cache Extensions Lambda Function ARN"
+    Value: !GetAtt SampleFunction.Arn
