@@ -61,7 +61,6 @@ Once the build is succesful, deploy the template using the command mentioned bel
 
 ```
 sam deploy --guided
-
 ```
 
 Once successfully deployed, login to the AWS Console > Services > Lambda. You will find a function starting with the name "ExtensionsCache-SampleFunction-..", which you can use it to test the cache extensions. 
