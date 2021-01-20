@@ -1,5 +1,5 @@
 {
-  "name": "Database Entry",
+  "name": "database-entry",
   "version": "1.0.0",
   "description": "AWS Lambda function to write sample record entry into the Dynamo DB database",
   "main": "index.js",
