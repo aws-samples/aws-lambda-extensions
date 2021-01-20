@@ -33,6 +33,17 @@ reads cached items using HTTP server hosted inside the extension
 - Zip utility needs to be installed in the local system
 - AWS CLI needs to be installed in the local system, for more information click [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 
+
+## Compile package and dependencies
+To run this example, you will need to ensure that your build architecture matches that of the Lambda execution environment by compiling with `GOOS=linux` and `GOARCH=amd64` if you are not running in a Linux environment.
+
+Building and saving package into a `bin/extensions` directory:
+```bash
+$ cd cache-extension-demo
+$ GOOS=linux GOARCH=amd64 go build -o bin/extensions/cache-extension-demo main.go
+$ chmod +x bin/extensions/cache-extension-demo
+```
+
 ## Deploy
 
 One can quickly deploy the extension using SAM or using AWS CLI 
@@ -46,11 +57,14 @@ First, we build all the dependencies   
 cd SAM/ 
 sam build
 ```
-Once the build is succesful, deploy the template using  
+Once the build is succesful, deploy the template using the command mentioned below. You can specify the deployment region, stack name and the database name. In case you are specifying a database name here, please update "../example-function/config.yaml" and "index.js" with the new database name. However, if default database name is chosen, no changes is required. 
+
 ```
 sam deploy --guided
 
 ```
+
+Once successfully deployed, login to the AWS Console > Services > Lambda. You will find a function starting with the name "ExtensionsCache-SampleFunction-..", which you can use it to test the cache extensions. 
 
 ### Option 2: AWS CLI 
 
@@ -93,16 +107,6 @@ aws dynamodb put-item \
     --return-item-collection-metrics SIZE
 ```
 > Note: Dynamodb values are stored under the key generated using the format `<table><hyphen><hashkey><hyphen><rangekey>`
-
-## Compile package and dependencies
-To run this example, you will need to ensure that your build architecture matches that of the Lambda execution environment by compiling with `GOOS=linux` and `GOARCH=amd64` if you are not running in a Linux environment.
-
-Building and saving package into a `bin/extensions` directory:
-```bash
-$ cd cache-extension-demo
-$ GOOS=linux GOARCH=amd64 go build -o bin/extensions/cache-extension-demo main.go
-$ chmod +x bin/extensions/cache-extension-demo
-```
 
 ## Layer Setup Process
 The extensions .zip file should contain a root directory called `extensions/`, where the extension executables are located. In this sample project we must include the `cache-extension-demo` binary.

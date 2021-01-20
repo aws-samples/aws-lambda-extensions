@@ -116,7 +116,7 @@ Resources:
         Fn::GetAtt: [ LambdaRole , "Arn" ]
       Runtime: nodejs12.x
       Timeout: 15
-      Code: LambdaCode/
+      Code: DatabaseEntryCode/
 
   # Custom Resource to invoke the PutEntry Lambda function   
   CustomResource:
