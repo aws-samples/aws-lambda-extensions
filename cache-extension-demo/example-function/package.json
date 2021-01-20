@@ -1,7 +1,7 @@
 {
-  "name": "example-function",
+  "name": "DatabaseEntry",
   "version": "1.0.0",
-  "description": "",
+  "description": "AWS Lambda function to write sample record entry into the Dynamo DB database",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
