@@ -54,7 +54,7 @@ if [ "${SELF_CONTAINED}" = "true" ] ; then
     echo 'Building self-contained extension...'
     echo ''
 
-    dotnet publish -c Release -f net5.0 -o bin/publish
+    dotnet publish -c Release -f net5.0 -p:Platform=x64 -o bin/publish
 
 else
     echo 'Building .NET Core 3.1 dependent extension...'

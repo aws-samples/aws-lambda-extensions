@@ -15,21 +15,22 @@
     <DebugType>None</DebugType>
   </PropertyGroup>
 
-  <!-- Include Lambda Extension hook script into the output. This step is unique for .NET 3.1, since .NET 5.0 will have to use another script and rename it -->
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' "> 
+  <!-- Include Lambda Extension hook script into the output for AnyCPU builds, since they depend on a preinstalled .NET Core Runtime -->
+  <ItemGroup Condition=" '$(Platform)' == 'AnyCPU' "> 
     <Content Include="extensions/csharp-example-extension"> 
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory> 
     </Content> 
   </ItemGroup>
 
-  <!-- This is .NET 5.0 specific - result should be published as a single self-contained file, so that it doesn't need .NET runtime to be preinstalled on the VM -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
+  <!-- This is x64 specific - result is published as a single self-contained file, so that it doesn't need .NET runtime to be preinstalled on the VM -->
+  <PropertyGroup Condition=" '$(Platform)' == 'x64' ">
     <PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>true</PublishSingleFile>
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
   </PropertyGroup>
-  <!-- Custom step for including csharp-example-extension-self-contained script into the package and renaming it -->
-  <Target Name="RenameExtensionHook" AfterTargets="Publish" Condition=" '$(TargetFramework)' == 'net5.0' ">
-    <Copy SourceFiles="extensions/csharp-example-extension-self-contained" DestinationFiles="$(PublishDir)/extensions/csharp-example-extension" OverwriteReadOnlyFiles="true" />
+
+  <!-- Custom step for moving self-contained executable into extensions folder, so that Lambda Extensions runtime can invoke it directly -->
+  <Target Name="RenameExtensionHook" AfterTargets="Publish" Condition=" '$(PublishSingleFile)' == 'true' ">
+    <Move SourceFiles="$(PublishDir)/csharp-example-extension" DestinationFiles="$(PublishDir)/extensions/csharp-example-extension" OverwriteReadOnlyFiles="true" />
   </Target>
 </Project>

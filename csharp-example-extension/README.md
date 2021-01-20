@@ -72,7 +72,7 @@ chmod +x extensions/*
 
 - Publish .NET Core project with `Release` configuration and targeting a specific framework. `csharp-example-extension.csproj` file contains all necessary configuration for building and packaging the result if needed. This command (see below) will download all necessary NuGet packages, referenced by the project, build the binaries using `Release` configuration settings and publish the result to `bin/publish` folder. Please, refer to [dotnet publish](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish) documentation for details and additional command line options.
 
-#### Build .NET Core 3.1 dependent extension
+#### Build runtime dependent extension (compatible with .NET Core 3.1 Lambda only!!!)
 
 ```bash
 dotnet publish -c Release -f netcoreapp3.1 -o bin/publish
@@ -80,8 +80,10 @@ dotnet publish -c Release -f netcoreapp3.1 -o bin/publish
 
 #### Build self-contained extension using .NET Core 5.0 runtime
 
+`-p:Platform=x64` switch will enable conditional build configuration in `csharp-example-extension.csproj` to package extension together with `linux-x64` runtime and wrap everything into a single bundle. This bundle doesn't require a custom shell script and will be deployed directly to `extensions` folder.
+
 ```bash
-dotnet publish -c Release -f net5.0 -o bin/publish
+dotnet publish -c Release -f net5.0 -p:Platform=x64 -o bin/publish
 ```
 
 - Change your current folder to the publish destination folder:
@@ -147,3 +149,5 @@ Validate that execution bit has been properly set on the extension shell script.
 For example `ls -la extensions` output should look like (notice `x` bit set):
 
 > -rwxr-xr-x   1 user  group  289 Dec 22 15:16 csharp-example-extension
+
+Self-contained deployments must make sure that `dotnet publish` output has proper executable flag set on the bundle file.
