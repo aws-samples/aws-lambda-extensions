@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace csharp_example_extension
@@ -10,12 +11,13 @@ namespace csharp_example_extension
     {  
         static async Task Main(string[] args)
         {
-            if(1 != args.Length || string.IsNullOrWhiteSpace(args[0]))
-            {
-                throw new ArgumentException("There must be a single non-empty extension name parameter provided!");
+            var extensionName = (1 == args.Length)
+                ? args[0]
+                : Assembly.GetEntryAssembly()?.GetName()?.Name;
+            
+            if (string.IsNullOrWhiteSpace(extensionName)) {
+                throw new InvalidOperationException("Failed to determine extension name!");
             }
-
-            var extensionName = args[0];
 
             using var client = new ExtensionClient(extensionName);
 
