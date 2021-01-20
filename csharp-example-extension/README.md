@@ -10,7 +10,7 @@ Project files and folders:
 - `Program.cs` - main entry point for this extension.
 - `ExtensionClient.cs` - Lambda Extension API client implementation.
 - `ExtensionEvent.cs` - Event types enumerable, so that the rest of the code can work with enum values, rather than string constants.
-- `extensions/csharp-example-extension` - Bash script that must be deployed to `opt/extensions` folder as an executable file (see manual deployment steps below for details). This script will be used for .NET Core 3.1 dependent deployment.
+- `extensions/csharp-example-extension` - Bash script that must be deployed to `opt/extensions` folder as an executable file (see manual deployment steps below for details). This script will be used for .NET runtime dependent deployment.
 - `extensions/csharp-example-extension-self-contained` - Bash script that must be deployed to `opt/extensions` folder as an executable file (see manual deployment steps below for details). This script will be used for self-contained deployment.
 
 ## Requirements
@@ -37,8 +37,8 @@ cd aws-lambda-extensions/csharp-example-extension
 
 ### Deployment options
 
-`csharp-example-extension.csproj` has all necessary configuration for deploying this extension as a self-contained executable or a .NET Core 3.1 dependent extension.
-Self-contained executable is built using .NET Core 5.0 targeting pack and does not require any runtime to be pre-installed for Lambda function, thus it is compatible with any Lambda functions (.NET, Java, NodeJS, etc.). All necessary .NET runtime libraries are packaged together with the extension, thus the result package is much larger, than the .NET runtime dependent package (10MB+ vs 10KB+).
+`csharp-example-extension.csproj` has all necessary configuration for deploying this extension as a self-contained executable or a .NET runtime dependent extension.
+Self-contained executable does not require any runtime to be pre-installed for Lambda function, thus it is compatible with any Lambda functions (.NET, Java, NodeJS, etc.). All necessary .NET runtime libraries are packaged together with the extension, thus the result package is much larger, than the .NET runtime dependent package (10MB+ vs 10KB+).
 
 ### Automated deployment: Use shell script to deploy the extension
 
