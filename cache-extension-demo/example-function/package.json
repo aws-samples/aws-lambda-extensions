@@ -1,7 +1,7 @@
 {
-  "name": "database-entry",
+  "name": "cache-extensions-function",
   "version": "1.0.0",
-  "description": "AWS Lambda function to write sample record entry into the Dynamo DB database",
+  "description": " Sample AWS Lambda function to leverage Cache Extensions",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -57,13 +57,21 @@ First, we build all the dependencies   
 cd SAM/ 
 sam build
 ```
+![SAMBuild](img/SAMBuild.svg)
+
 Once the build is succesful, deploy the template using the command mentioned below. You can specify the deployment region, stack name and the database name. In case you are specifying a database name here, please update "../example-function/config.yaml" and "index.js" with the new database name. However, if default database name is chosen, no changes is required. 
 
 ```
 sam deploy --guided
 ```
+![SAMDeploy](img/SAMDeploy.svg)
 
-Once successfully deployed, login to the AWS Console > Services > Lambda. You will find a function starting with the name "ExtensionsCache-SampleFunction-..", which you can use it to test the cache extensions. 
+The above SAM template creates two Lambda functions - "ExtensionsCache-SampleFunction" and "ExtensionsCache-DatabaseEntry", Cache Extensions as a layer and a sample DynamoDB table. "ExtensionsCache-DatabaseEntry" lambda function puts a sample record to the created DynamoDB table. Cache Extensions layer is attached to the function - "ExtensionsCache-SampleFunction" as a lambda layer and it caches the data from the DynamoDB table. 
+
+Once the SAM template is successfully deployed, navigate to the AWS Console > Services > Lambda. You will find a function starting with the name "ExtensionsCache-SampleFunction-.." under the Functions tab. Test the cache extensions by hitting the Invoke button. You should see the output similar to the one below:
+
+![LambdaResults](img/LambdaTestResults.svg)
+
 
 ### Option 2: AWS CLI 
 

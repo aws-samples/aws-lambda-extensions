@@ -14,42 +14,6 @@ Parameters:
       
 Resources:
 
-  # Cache Extension - Lambda Function
-  SampleFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../example-function/
-      Handler: index.handler
-      Runtime: nodejs12.x
-      Environment: 
-        Variables:
-          databaseName: 
-            Ref: DatabaseName
-      Layers: 
-        - !Ref CacheExtensionLayer
-      Policies:
-        - AWSLambdaExecute
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - dynamodb:GetItem
-                - ssm:GetParameter
-              Resource: '*'
-  
-  # Cache Extension - Lambda Layer
-  CacheExtensionLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      ContentUri: ../bin/
-      CompatibleRuntimes:
-        - nodejs12.x
-        - python3.8
-        - java11
-        - go1.x
-      LayerName: Cache_Extension_Layer
-      Description: Caching layer for DynamoDB
-  
   # Sample Dynamo DB Table 
   DynamoDBTable: 
     Type: AWS::DynamoDB::Table
@@ -72,7 +36,63 @@ Resources:
           AttributeName: "sKey"
           KeyType: "RANGE"
 
+  # Sample SSM Parameter 
+  SSMParameter:
+    Type: AWS::SSM::Parameter
+    Properties: 
+      Name: "CacheExtensions_Parameter1"
+      Type: "String"
+      Value: "Parameter_value"
+    
 
+  # Cache Extension - Lambda Function
+  SampleFunction:
+    Type: AWS::Serverless::Function
+    DependsOn: 
+      - DynamoDBTable
+      - SSMParameter
+    Properties:
+      CodeUri: ../example-function/
+      Handler: index.handler
+      Runtime: nodejs12.x
+      Environment: 
+        Variables:
+          databaseName: 
+            Ref: DatabaseName
+      Layers: 
+        - !Ref CacheExtensionLayer
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+              Resource: 
+                !Join
+                  - ''
+                  - - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/'
+                    - Ref: DatabaseName
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - ssm:GetParameter
+              Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CacheExtensions_Parameter1'
+                
+  
+  # Cache Extension - Lambda Layer
+  CacheExtensionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: ../bin/
+      CompatibleRuntimes:
+        - nodejs12.x
+        - python3.8
+        - java11
+        - go1.x
+      LayerName: Cache_Extension_Layer
+      Description: Caching layer for DynamoDB
+  
   # Lambda IAM Role to put data to DynamoDB 
   LambdaRole:
     Type: AWS::IAM::Role
@@ -106,7 +126,7 @@ Resources:
 
   # PutEntry Lambda function to put data to Dynamo DB Table 
   DatabaseEntry:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     DependsOn: 
       - DynamoDBTable
       - LambdaRole
@@ -116,7 +136,7 @@ Resources:
         Fn::GetAtt: [ LambdaRole , "Arn" ]
       Runtime: nodejs12.x
       Timeout: 15
-      Code: DatabaseEntryCode/
+      CodeUri: DatabaseEntryCode/
 
   # Custom Resource to invoke the PutEntry Lambda function   
   CustomResource:
