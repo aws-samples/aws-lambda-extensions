@@ -11,6 +11,10 @@ Parameters:
     Type: String
     Description: Please enter a name for the database
     Default: "DynamoDbTable"
+  SecretValue:
+    Type: String
+    Description: Secret value stored in AWS Secrets manager
+    Default: "Hello World"
       
 Resources:
   # Sample Dynamo DB Table 
@@ -21,18 +25,14 @@ Resources:
         Ref: DatabaseName
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
-        - 
-          AttributeName: "pKey"
+        - AttributeName: "pKey"
           AttributeType: "S"
-        - 
-          AttributeName: "sKey"
+        - AttributeName: "sKey"
           AttributeType: "S"
       KeySchema: 
-        - 
-          AttributeName: "pKey"
+        - AttributeName: "pKey"
           KeyType: "HASH"
-        - 
-          AttributeName: "sKey"
+        - AttributeName: "sKey"
           KeyType: "RANGE"
 
   # Sample SSM Parameter 
@@ -42,7 +42,14 @@ Resources:
       Name: "CacheExtensions_Parameter1"
       Type: "String"
       Value: "Parameter_value"
-    
+
+  # Sample Secret record
+  SecretRecord:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: "secret_info"
+      SecretString: 
+        Ref: SecretValue
 
   # Cache Extension - Lambda Function
   SampleFunction:
@@ -61,10 +68,15 @@ Resources:
       Layers: 
         - !Ref CacheExtensionLayer
       Policies:
+        - AmazonSSMReadOnlyAccess
         - DynamoDBReadPolicy:
             TableName: !Ref DynamoDBTable     
         - SSMParameterReadPolicy:
             ParameterName: !Ref SSMParameter
+        - SSMParameterReadPolicy:
+            ParameterName: !Ref SSMParameter
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref SecretRecord
   
   # Cache Extension - Lambda Layer
   CacheExtensionLayer:

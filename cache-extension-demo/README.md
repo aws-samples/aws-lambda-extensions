@@ -50,7 +50,7 @@ One can quickly deploy the extension using SAM or using AWS CLI 
 
 ### Option 1: SAM 
 
-In this SAM Deployment, we create a sample DynamoDB Table, and a sample Lambda function with the cache extensions attached as a layer. Lambda Extension is a Go executable, so it can be easily imported in any lambda function as a Layer. If you are new to SAM, you can quickly install SAM. Once you have SAM, Cache extension deployment involves two simple steps:
+Cache Lambda Extension is a Go executable, which can be easily imported in any lambda function as a Layer. If you are new to SAM, you can quickly install SAM. Once you have SAM, Cache extension deployment involves two simple steps:
 
 First, we build all the dependencies   
 ```
@@ -66,17 +66,34 @@ sam deploy --guided
 ```
 ![SAMDeploy](img/SAMDeploy.svg)
 
-The above SAM template creates two Lambda functions - "ExtensionsCache-SampleFunction" and "ExtensionsCache-DatabaseEntry", Cache Extensions as a layer and a sample DynamoDB table. "ExtensionsCache-DatabaseEntry" lambda function puts a sample record to the created DynamoDB table. Cache Extensions layer is attached to the function - "ExtensionsCache-SampleFunction" as a lambda layer and it caches the data from the DynamoDB table. 
+The above SAM template creates two Lambda functions - "ExtensionsCache-SampleFunction" and "ExtensionsCache-DatabaseEntry", Cache Extensions as a layer, sample DynamoDB table, sample AWS Systems Manager - Parameter Store and the necessary IAM permissions. "ExtensionsCache-DatabaseEntry" lambda function puts a sample record into DynamoDB table. A Cache Extensions layer is attached to the function - "ExtensionsCache-SampleFunction" and this is responsible for caching the data from the DynamoDB table/ Parameter Store/ Secrets Manager [(via Parameter Store)](https://docs.aws.amazon.com/systems-manager/latest/userguide/integration-ps-secretsmanager.html). 
 
 Once the SAM template is successfully deployed, navigate to the AWS Console > Services > Lambda. You will find a function starting with the name "ExtensionsCache-SampleFunction-.." under the Functions tab. Test the cache extensions by hitting the Invoke button. You should see the output similar to the one below:
 
 ![LambdaResults](img/LambdaTestResults.svg)
 
+The "path" field in the sample function code can be modified as follows to test out the cache access:
+
+Access AWS Parameter Store configuration
+
+``` 
+ ...
+ path: '/parameters?name=CacheExtensions_Parameter1',
+ ...
+```
+
+Access Secrets Manager Via Parameter Store
+
+``` 
+ ...
+ path: '/parameters?name=/aws/reference/secretsmanager/secret_info',
+ ...
+```
 
 ### Option 2: AWS CLI 
 
 ### Parameter Store
-Create a new parameter using the following command
+Create a new parameter in AWS Parameter store using the following command
 
 ```bash
 aws ssm put-parameter \
@@ -85,6 +102,14 @@ aws ssm put-parameter \
     --value "Parameter_value"
 ```
 
+### Secrets Manager
+Create a new secret in AWS Secrets Manager using the following command
+
+```bash
+aws secretsmanager \
+    --name "secret_info" \
+    --secret-string "Hello World"
+```
 ### DynamoDB
 - Create a new dynamodb table with a partition key compassing of hash and sort key
 
