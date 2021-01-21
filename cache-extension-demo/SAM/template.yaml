@@ -13,7 +13,6 @@ Parameters:
     Default: "DynamoDbTable"
       
 Resources:
-
   # Sample Dynamo DB Table 
   DynamoDBTable: 
     Type: AWS::DynamoDB::Table
@@ -62,23 +61,10 @@ Resources:
       Layers: 
         - !Ref CacheExtensionLayer
       Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - dynamodb:GetItem
-              Resource: 
-                !Join
-                  - ''
-                  - - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/'
-                    - Ref: DatabaseName
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - ssm:GetParameter
-              Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CacheExtensions_Parameter1'
-                
+        - DynamoDBReadPolicy:
+            TableName: !Ref DynamoDBTable     
+        - SSMParameterReadPolicy:
+            ParameterName: !Ref SSMParameter
   
   # Cache Extension - Lambda Layer
   CacheExtensionLayer:
@@ -93,50 +79,19 @@ Resources:
       LayerName: Cache_Extension_Layer
       Description: Caching layer for DynamoDB
   
-  # Lambda IAM Role to put data to DynamoDB 
-  LambdaRole:
-    Type: AWS::IAM::Role
-    DependsOn: DynamoDBTable
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - lambda.amazonaws.com
-          Action:
-          - sts:AssumeRole
-      Path: "/"
-      ManagedPolicyArns: 
-        - "arn:aws:iam::aws:policy/AWSLambdaExecute"
-      Policies: 
-        - PolicyName: dynamodbAccessRole
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-            - Effect: Allow
-              Action:
-              - dynamodb:PutItem
-              Resource: 
-                !Join
-                  - ''
-                  - - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/'
-                    - Ref: DatabaseName
-
   # PutEntry Lambda function to put data to Dynamo DB Table 
   DatabaseEntry:
     Type: AWS::Serverless::Function
     DependsOn: 
       - DynamoDBTable
-      - LambdaRole
     Properties:
       Handler: index.handler
-      Role: 
-        Fn::GetAtt: [ LambdaRole , "Arn" ]
       Runtime: nodejs12.x
       Timeout: 15
       CodeUri: DatabaseEntryCode/
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref DynamoDBTable
 
   # Custom Resource to invoke the PutEntry Lambda function   
   CustomResource:
