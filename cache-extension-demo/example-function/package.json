@@ -1,0 +1,11 @@
+{
+  "name": "cache-extensions-function",
+  "version": "1.0.0",
+  "description": " Sample AWS Lambda function to leverage Cache Extensions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT-0"
+}

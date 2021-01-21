@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Sample AWS SAM App for Cache Extension demo application
+
+Globals:
+  Function:
+    Timeout: 10
+
+Parameters:
+  DatabaseName: 
+    Type: String
+    Description: Please enter a name for the database
+    Default: "DynamoDbTable"
+  SecretValue:
+    Type: String
+    Description: Secret value stored in AWS Secrets manager
+    Default: "Hello World"
+    NoEcho: true
+      
+Resources:
+  # Sample Dynamo DB Table 
+  DynamoDBTable: 
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 
+        Ref: DatabaseName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: "pKey"
+          AttributeType: "S"
+        - AttributeName: "sKey"
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: "pKey"
+          KeyType: "HASH"
+        - AttributeName: "sKey"
+          KeyType: "RANGE"
+
+  # Sample SSM Parameter 
+  SSMParameter:
+    Type: AWS::SSM::Parameter
+    Properties: 
+      Name: "CacheExtensions_Parameter1"
+      Type: "String"
+      Value: "Parameter_value"
+
+  # Sample Secret record
+  SecretRecord:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: "secret_info"
+      SecretString: 
+        Ref: SecretValue
+
+  # Cache Extension - Lambda Function
+  SampleFunction:
+    Type: AWS::Serverless::Function
+    DependsOn: 
+      - DynamoDBTable
+      - SSMParameter
+    Properties:
+      CodeUri: ../example-function/
+      Handler: index.handler
+      Runtime: nodejs12.x
+      Environment: 
+        Variables:
+          databaseName: 
+            Ref: DatabaseName
+      Layers: 
+        - !Ref CacheExtensionLayer
+      Policies:
+        - AmazonSSMReadOnlyAccess
+        - DynamoDBReadPolicy:
+            TableName: !Ref DynamoDBTable     
+        - SSMParameterReadPolicy:
+            ParameterName: !Ref SSMParameter
+        - SSMParameterReadPolicy:
+            ParameterName: !Ref SSMParameter
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref SecretRecord
+  
+  # Cache Extension - Lambda Layer
+  CacheExtensionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: ../bin/
+      CompatibleRuntimes:
+        - nodejs12.x
+        - python3.8
+        - java11
+        - go1.x
+      LayerName: Cache_Extension_Layer
+      Description: Caching layer for DynamoDB
+  
+  # PutEntry Lambda function to put data to Dynamo DB Table 
+  DatabaseEntry:
+    Type: AWS::Serverless::Function
+    DependsOn: 
+      - DynamoDBTable
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs12.x
+      Timeout: 15
+      CodeUri: DatabaseEntryCode/
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref DynamoDBTable
+
+  # Custom Resource to invoke the PutEntry Lambda function   
+  CustomResource:
+    Type: Custom::LambdaInvoker
+    DependsOn: DatabaseEntry
+    Properties:
+      ServiceToken: 
+        Fn::GetAtt: [ DatabaseEntry , "Arn" ]
+      DBName: 
+        Ref: DatabaseName
+
+Outputs:
+
+  SampleCacheExtensionsFunction:
+    Description: "Sample Cache Extensions Lambda Function ARN"
+    Value: !GetAtt SampleFunction.Arn

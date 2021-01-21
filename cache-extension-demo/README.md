@@ -33,9 +33,67 @@ reads cached items using HTTP server hosted inside the extension
 - Zip utility needs to be installed in the local system
 - AWS CLI needs to be installed in the local system, for more information click [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 
+
+## Compile package and dependencies
+To run this example, you will need to ensure that your build architecture matches that of the Lambda execution environment by compiling with `GOOS=linux` and `GOARCH=amd64` if you are not running in a Linux environment.
+
+Building and saving package into a `bin/extensions` directory:
+```bash
+$ cd cache-extension-demo
+$ GOOS=linux GOARCH=amd64 go build -o bin/extensions/cache-extension-demo main.go
+$ chmod +x bin/extensions/cache-extension-demo
+```
+
 ## Deploy
+
+One can quickly deploy the extension using SAM or using AWS CLI 
+
+### Option 1: SAM 
+
+Cache Lambda Extension is a Go executable, which can be easily imported in any lambda function as a Layer. If you are new to SAM, you can quickly install SAM. Once you have SAM, Cache extension deployment involves two simple steps:
+
+First, we build all the dependencies   
+```
+cd SAM/ 
+sam build
+```
+![SAMBuild](img/SAMBuild.svg)
+
+Once the build is succesful, deploy the template using the command mentioned below. You can specify the deployment region, stack name and the database name. In case you are specifying a database name here, please update "../example-function/config.yaml" and "index.js" with the new database name. However, if default database name is chosen, no changes is required. 
+
+```
+sam deploy --guided
+```
+![SAMDeploy](img/SAMDeploy.svg)
+
+The above SAM template creates two Lambda functions - "ExtensionsCache-SampleFunction" and "ExtensionsCache-DatabaseEntry", Cache Extensions as a layer, sample DynamoDB table, sample AWS Systems Manager - Parameter Store and the necessary IAM permissions. "ExtensionsCache-DatabaseEntry" lambda function puts a sample record into DynamoDB table. A Cache Extensions layer is attached to the function - "ExtensionsCache-SampleFunction" and this is responsible for caching the data from the DynamoDB table/ Parameter Store/ Secrets Manager [(via Parameter Store)](https://docs.aws.amazon.com/systems-manager/latest/userguide/integration-ps-secretsmanager.html). 
+
+Once the SAM template is successfully deployed, navigate to the AWS Console > Services > Lambda. You will find a function starting with the name "ExtensionsCache-SampleFunction-.." under the Functions tab. Test the cache extensions by hitting the Invoke button. You should see the output similar to the one below:
+
+![LambdaResults](img/LambdaTestResults.svg)
+
+The "path" field in the sample function code can be modified as follows to test out the cache access:
+
+Access AWS Parameter Store configuration
+
+``` 
+ ...
+ path: '/parameters?name=CacheExtensions_Parameter1',
+ ...
+```
+
+Access Secrets Manager Via Parameter Store
+
+``` 
+ ...
+ path: '/parameters?name=/aws/reference/secretsmanager/secret_info',
+ ...
+```
+
+### Option 2: AWS CLI 
+
 ### Parameter Store
-Create a new parameter using the following command
+Create a new parameter in AWS Parameter store using the following command
 
 ```bash
 aws ssm put-parameter \
@@ -44,6 +102,14 @@ aws ssm put-parameter \
     --value "Parameter_value"
 ```
 
+### Secrets Manager
+Create a new secret in AWS Secrets Manager using the following command
+
+```bash
+aws secretsmanager \
+    --name "secret_info" \
+    --secret-string "Hello World"
+```
 ### DynamoDB
 - Create a new dynamodb table with a partition key compassing of hash and sort key
 
@@ -73,16 +139,6 @@ aws dynamodb put-item \
     --return-item-collection-metrics SIZE
 ```
 > Note: Dynamodb values are stored under the key generated using the format `<table><hyphen><hashkey><hyphen><rangekey>`
-
-## Compile package and dependencies
-To run this example, you will need to ensure that your build architecture matches that of the Lambda execution environment by compiling with `GOOS=linux` and `GOARCH=amd64` if you are not running in a Linux environment.
-
-Building and saving package into a `bin/extensions` directory:
-```bash
-$ cd cache-extension-demo
-$ GOOS=linux GOARCH=amd64 go build -o bin/extensions/cache-extension-demo main.go
-$ chmod +x bin/extensions/cache-extension-demo
-```
 
 ## Layer Setup Process
 The extensions .zip file should contain a root directory called `extensions/`, where the extension executables are located. In this sample project we must include the `cache-extension-demo` binary.

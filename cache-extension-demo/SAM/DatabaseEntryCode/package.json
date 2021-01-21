@@ -1,0 +1,14 @@
+{
+  "name": "DatabaseEntry",
+  "version": "1.0.0",
+  "description": "AWS Lambda code which inserts a sample record to Dynamo DB",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT-0",
+  "dependencies": {
+    "cfn-response": "^1.0.1"
+  }
+}

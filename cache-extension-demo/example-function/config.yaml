@@ -3,7 +3,8 @@
 parameters:
   - region: us-west-2
     names:
-      - Parameter1
+      - CacheExtensions_Parameter1
+      - /aws/reference/secretsmanager/secret_info
 dynamodb:
   - table: DynamoDbTable
     hashkey: pKey
