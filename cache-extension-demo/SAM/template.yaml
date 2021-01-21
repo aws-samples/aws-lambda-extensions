@@ -15,6 +15,7 @@ Parameters:
     Type: String
     Description: Secret value stored in AWS Secrets manager
     Default: "Hello World"
+    NoEcho: true
       
 Resources:
   # Sample Dynamo DB Table 
