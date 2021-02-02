@@ -11,11 +11,16 @@ Parameters:
     Type: String
     Description: Please enter a name for the database
     Default: "DynamoDbTable"
+  ParameterValue:
+    Type: String
+    Description: Parameter value stored in Systems Manager Parameter Store
+    Default: "MyParameter"
   SecretValue:
     Type: String
     Description: Secret value stored in AWS Secrets manager
-    Default: "Hello World"
+    Default: "MySecret"
     NoEcho: true
+
       
 Resources:
   # Sample Dynamo DB Table 
@@ -42,7 +47,8 @@ Resources:
     Properties: 
       Name: "CacheExtensions_Parameter1"
       Type: "String"
-      Value: "Parameter_value"
+      Value: 
+        Ref: ParameterValue
 
   # Sample Secret record
   SecretRecord:
