@@ -39,7 +39,7 @@ func main() {
 	extension.InitCacheExtensions()
 
 	// Start HTTP server
-	ipc.Start("3000")
+	ipc.Start("4000")
 
 	// Will block until shutdown event is received or cancelled via the context.
 	processEvents(ctx)
