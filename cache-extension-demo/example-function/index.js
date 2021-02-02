@@ -14,7 +14,7 @@ exports.handler = function(event, context, callback) {
 
     const req = https.request(options, res => {
         res.on('data', d => {
-            console.log("Finally got some response here: "+d);
+            console.log("Retrieved data from the cache: "+d);
             return d;
         });
     });
