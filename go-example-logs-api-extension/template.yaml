@@ -21,7 +21,7 @@ Resources:
       Description: Go Example Logs API Lambda Extension Layer
       ContentUri: .
       CompatibleRuntimes:
-      - nodejs14.x
+      - nodejs12.x
       - python3.8
       - java11
       - dotnetcore3.1
@@ -34,7 +34,7 @@ Resources:
       FunctionName: go-example-logs-api-extension-demo-function
       CodeUri: hello-world/
       Handler: app.lambdaHandler
-      Runtime: nodejs14.x
+      Runtime: nodejs12.x
       Layers:
       - !Ref GoExampleLogsApiExtensionLayer
       Environment:
@@ -42,7 +42,7 @@ Resources:
           LOGS_API_EXTENSION_S3_BUCKET:
             Ref: LogExtensionsBucket
       Policies:
-        - S3WritePolicy:
+        - S3FullAccessPolicy:
             BucketName: !Ref LogExtensionsBucket
 
   LogExtensionsBucket:
