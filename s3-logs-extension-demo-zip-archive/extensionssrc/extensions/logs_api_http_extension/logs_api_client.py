@@ -29,7 +29,9 @@ class LogsAPIClient:
             data = json.dumps(subscription_body).encode("utf-8")
             req.data = data
             resp = urllib.request.urlopen(req)
-            if resp.status != 200:
+            if resp.status == 202:
+                print("extension.logs_api_client: WARNING!!! Logs API is not supported! Is this extension running in a local sandbox?")
+            elif resp.status != 200:
                 print(f"extension.logs_api_client: Could not subscribe to Logs API: {resp.status} {resp.read()}")
                 # Fail the extension
                 sys.exit(1)
