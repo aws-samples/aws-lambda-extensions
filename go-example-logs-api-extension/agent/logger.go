@@ -74,6 +74,8 @@ func NewS3Logger() (*S3Logger, error) {
 	bucket, present := os.LookupEnv("LOGS_API_EXTENSION_S3_BUCKET")
 	if !present {
 		return nil, errors.New("Environment variable LOGS_API_EXTENSION_S3_BUCKET is not set.")
+	} else {
+		fmt.Println("Sending logs to:", bucket)
 	}
 	ts := int(time.Now().UnixNano() / 1000000)
 	timestampMilli := strconv.Itoa(ts)

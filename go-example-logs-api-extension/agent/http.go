@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"aws-lambda-extensions/go-example-logs-api-extension/logsapi"
+
 	"github.com/golang-collections/go-datastructures/queue"
 )
 
