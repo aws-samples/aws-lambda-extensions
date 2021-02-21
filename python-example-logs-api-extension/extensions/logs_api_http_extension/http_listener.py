@@ -5,23 +5,34 @@ import json
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Event, Thread
+import socket
 
 """ Demonstrates code to set up an HTTP listener and receive log events
 """
 
+RECEIVER_NAME = "sandbox"
 RECEIVER_IP = "0.0.0.0"
 RECEIVER_PORT = 4243
+
+def listenerAddress():
+    try:
+        socket.gethostbyname(RECEIVER_NAME)
+        return RECEIVER_NAME
+    except:
+        return RECEIVER_IP
 
 def http_server_init(queue):
     def handler(*args):
         LogsHandler(queue, *args)
-    print(f"Initializing HTTP Server on {RECEIVER_IP}:{RECEIVER_PORT}")
-    server = HTTPServer((RECEIVER_IP, RECEIVER_PORT), handler)
+
+    listenerName = listenerAddress()
+    print(f"Initializing HTTP Server on {listenerName}:{RECEIVER_PORT}")
+    server = HTTPServer((listenerName, RECEIVER_PORT), handler)
 
     # Ensure that the server thread is scheduled so that the server binds to the port
     # and starts to listening before subscribe for the logs and ask for the next event.
     started_event = Event()
-    server_thread = Thread(target=serve, daemon=True, args=(started_event, server,))
+    server_thread = Thread(target=serve, daemon=True, args=(started_event, server,listenerName,))
     server_thread.start()
     rc = started_event.wait(timeout = 9)
     if rc is not True:
@@ -51,11 +62,11 @@ class LogsHandler(BaseHTTPRequestHandler):
             print(f"Error processing message: {e}")
 
 # Server thread
-def serve(started_event, server):
+def serve(started_event, server, listenerName):
     # Notify that this thread is up and running
     started_event.set()
     try:
-        print(f"Serving HTTP Server on {RECEIVER_IP}:{RECEIVER_PORT}")
+        print(f"Serving HTTP Server on {listenerName}:{RECEIVER_PORT}")
         server.serve_forever()
     except:
         print(f"Error in HTTP server {sys.exc_info()[0]}")
