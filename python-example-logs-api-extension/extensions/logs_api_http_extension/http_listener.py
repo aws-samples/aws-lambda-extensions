@@ -51,9 +51,7 @@ class LogsHandler(BaseHTTPRequestHandler):
             content = self.rfile.read(data_len)
             self.send_response(200)
             self.end_headers()
-            body = content.decode("utf-8")
-            batch = json.loads(body)
-            print(f"Body: {body}")
+            batch = json.loads(content.decode("utf-8"))
             self.queue.put(batch)
 
         except Exception as e:
