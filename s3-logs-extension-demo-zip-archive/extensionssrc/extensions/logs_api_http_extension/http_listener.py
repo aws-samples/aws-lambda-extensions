@@ -2,23 +2,19 @@
 # SPDX-License-Identifier: MIT-0
 
 import json
+import os
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Event, Thread
-import socket
 
 # Demonstrates code to set up an HTTP listener and receive log events
 
 RECEIVER_NAME = "sandbox"
-RECEIVER_IP = "0.0.0.0"
+RECEIVER_IP = "127.0.0.1"
 RECEIVER_PORT = 4243
 
 def listenerAddress():
-    try:
-        socket.gethostbyname(RECEIVER_NAME)
-        return RECEIVER_NAME
-    except:
-        return RECEIVER_IP
+    return RECEIVER_IP if ("true" == os.getenv("AWS_SAM_LOCAL")) else RECEIVER_NAME
 
 def http_server_init(queue):
     def handler(*args):

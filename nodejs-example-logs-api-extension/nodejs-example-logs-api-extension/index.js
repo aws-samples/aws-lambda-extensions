@@ -4,7 +4,6 @@ const { subscribe } = require('./logs-api');
 const { listen } = require('./http-listener');
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
-const dns = require('dns');
 
 /**
 
@@ -35,12 +34,9 @@ function handleInvoke(event) {
 }
 
 async function recieverAddress() {
-    try {
-        await dns.promises.resolve('sandbox');
-        return 'sandbox';
-    } catch(err) {
-        return '0.0.0.0';
-    }
+    return (process.env.AWS_SAM_LOCAL === 'true')
+        ? '127.0.0.1'
+        : 'sandbox';
 }
 
 const BUCKET_NAME = process.env.LOGS_S3_BUCKET_NAME;
