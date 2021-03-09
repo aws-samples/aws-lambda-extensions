@@ -10,7 +10,7 @@ from threading import Event, Thread
 # Demonstrates code to set up an HTTP listener and receive log events
 
 RECEIVER_NAME = "sandbox"
-RECEIVER_IP = "127.0.0.1"
+RECEIVER_IP = "0.0.0.0"
 RECEIVER_PORT = 4243
 
 def listenerAddress():

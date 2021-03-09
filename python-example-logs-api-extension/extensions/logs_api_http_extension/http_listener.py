@@ -11,7 +11,7 @@ from threading import Event, Thread
 """
 
 RECEIVER_NAME = "sandbox"
-RECEIVER_IP = "127.0.0.1"
+RECEIVER_IP = "0.0.0.0"
 RECEIVER_PORT = 4243
 
 def listenerAddress():
@@ -51,7 +51,9 @@ class LogsHandler(BaseHTTPRequestHandler):
             content = self.rfile.read(data_len)
             self.send_response(200)
             self.end_headers()
-            batch = json.loads(content.decode("utf-8"))
+            body = content.decode("utf-8")
+            batch = json.loads(body)
+            print(f"Body: {body}")
             self.queue.put(batch)
 
         except Exception as e:

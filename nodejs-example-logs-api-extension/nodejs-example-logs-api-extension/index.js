@@ -35,7 +35,7 @@ function handleInvoke(event) {
 
 async function recieverAddress() {
     return (process.env.AWS_SAM_LOCAL === 'true')
-        ? '127.0.0.1'
+        ? '0.0.0.0'
         : 'sandbox';
 }
 
