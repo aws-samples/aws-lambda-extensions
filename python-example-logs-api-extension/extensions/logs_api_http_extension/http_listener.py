@@ -11,24 +11,24 @@ from threading import Event, Thread
 """
 
 RECEIVER_NAME = "sandbox"
-RECEIVER_IP = "0.0.0.0"
+LOCAL_DEBUGGING_IP = "0.0.0.0"
 RECEIVER_PORT = 4243
 
-def listenerAddress():
-    return RECEIVER_IP if ("true" == os.getenv("AWS_SAM_LOCAL")) else RECEIVER_NAME
+def get_listener_address():
+    return RECEIVER_NAME if ("true" != os.getenv("AWS_SAM_LOCAL")) else LOCAL_DEBUGGING_IP
 
 def http_server_init(queue):
     def handler(*args):
         LogsHandler(queue, *args)
 
-    listenerName = listenerAddress()
-    print(f"Initializing HTTP Server on {listenerName}:{RECEIVER_PORT}")
-    server = HTTPServer((listenerName, RECEIVER_PORT), handler)
+    listener_address = get_listener_address()
+    print(f"Initializing HTTP Server on {listener_address}:{RECEIVER_PORT}")
+    server = HTTPServer((listener_address, RECEIVER_PORT), handler)
 
     # Ensure that the server thread is scheduled so that the server binds to the port
     # and starts to listening before subscribe for the logs and ask for the next event.
     started_event = Event()
-    server_thread = Thread(target=serve, daemon=True, args=(started_event, server,listenerName,))
+    server_thread = Thread(target=serve, daemon=True, args=(started_event, server,listener_address,))
     server_thread.start()
     rc = started_event.wait(timeout = 9)
     if rc is not True:

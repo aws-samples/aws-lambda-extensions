@@ -33,17 +33,19 @@ function handleInvoke(event) {
     console.log('invoke');
 }
 
-async function recieverAddress() {
+const LOCAL_DEBUGGING_IP = "0.0.0.0";
+const RECEIVER_NAME = "sandbox";
+
+async function receiverAddress() {
     return (process.env.AWS_SAM_LOCAL === 'true')
-        ? '0.0.0.0'
-        : 'sandbox';
+        ? LOCAL_DEBUGGING_IP
+        : RECEIVER_NAME;
 }
 
 const BUCKET_NAME = process.env.LOGS_S3_BUCKET_NAME;
 const FUNCTION_NAME = process.env.AWS_LAMBDA_FUNCTION_NAME;
 
 // Subscribe to platform logs and receive them on ${local_ip}:4243 via HTTP protocol.
-const RECEIVER_IP = "0.0.0.0";
 const RECEIVER_PORT = 4243;
 const TIMEOUT_MS = 1000 // Maximum time (in milliseconds) that a batch is buffered.
 const MAX_BYTES = 262144 // Maximum size in bytes that the logs are buffered in memory.
@@ -52,7 +54,7 @@ const MAX_ITEMS = 10000 // Maximum number of events that are buffered in memory.
 const SUBSCRIPTION_BODY = {
     "destination":{
         "protocol": "HTTP",
-        "URI": `http://sandbox:${RECEIVER_PORT}`,
+        "URI": `http://${RECEIVER_NAME}:${RECEIVER_PORT}`,
     },
     "types": ["platform", "function"],
     "buffering": {
@@ -74,7 +76,7 @@ const SUBSCRIPTION_BODY = {
 
     console.log('starting listener');
     // listen returns `logsQueue`, a mutable array that collects logs received from Logs API
-    const { logsQueue, server } = listen(await recieverAddress(), RECEIVER_PORT);
+    const { logsQueue, server } = listen(await receiverAddress(), RECEIVER_PORT);
 
     console.log('subscribing listener');
     // subscribing listener to the Logs API

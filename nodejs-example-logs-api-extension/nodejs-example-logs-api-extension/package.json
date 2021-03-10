@@ -4,8 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "2.843.0",
-    "http-terminator": "^3.0.0",
+    "aws-sdk": "2.860.0",
     "node-fetch": "^2.6.1"
   }
 }
