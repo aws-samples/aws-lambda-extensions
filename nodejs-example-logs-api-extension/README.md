@@ -28,7 +28,8 @@ Creating zip package for the extension:
 
 ```bash
 chmod +x extensions/nodejs-example-logs-api-extension
-zip -r extension.zip .
+zip -r extension.zip ./nodejs-example-logs-api-extension
+zip -r extension.zip ./extensions
 ```
 
 Ensure that you have aws-cli v2 for the commands below.

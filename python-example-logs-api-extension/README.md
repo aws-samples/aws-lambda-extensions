@@ -17,7 +17,7 @@ Creating zip package for the extension:
 ```bash
 cd python-example-logs-api-extension
 chmod +x extensions/logs_api_http_extension.py
-zip -r extension.zip .
+zip -r extension.zip ./extensions
 ```
 
 Publish a new layer using the `extension.zip`. The output of the following command should provide you a layer arn.
