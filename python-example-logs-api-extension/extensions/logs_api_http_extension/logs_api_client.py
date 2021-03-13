@@ -36,7 +36,7 @@ class LogsAPIClient:
                 print(f"Could not subscribe to Logs API: {resp.status} {resp.read()}")
                 # Fail the extension
                 sys.exit(1)
-            print(f"Succesfully subscribed to Logs API: {resp.read()}")
+            print(f"Successfully subscribed to Logs API: {resp.read()}")
         except Exception as e:
             raise Exception(f"Failed to subscribe to Logs API on {self.logs_api_base_url} with id: {agent_id} \
                 and subscription_body: {json.dumps(subscription_body).encode('utf-8')} \nError:{e}") from e
