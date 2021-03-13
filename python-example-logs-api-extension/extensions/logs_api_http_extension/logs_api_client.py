@@ -30,11 +30,13 @@ class LogsAPIClient:
             data = json.dumps(subscription_body).encode("utf-8")
             req.data = data
             resp = urllib.request.urlopen(req)
-            if resp.status != 200:
+            if resp.status == 202:
+                print("extensions.logs_api_client: WARNING!!! Logs API is not supported! Is this extension running in a local sandbox?")
+            elif resp.status != 200:
                 print(f"Could not subscribe to Logs API: {resp.status} {resp.read()}")
                 # Fail the extension
                 sys.exit(1)
-            print(f"Succesfully subscribed to Logs API: {resp.read()}")
+            print(f"Successfully subscribed to Logs API: {resp.read()}")
         except Exception as e:
             raise Exception(f"Failed to subscribe to Logs API on {self.logs_api_base_url} with id: {agent_id} \
                 and subscription_body: {json.dumps(subscription_body).encode('utf-8')} \nError:{e}") from e

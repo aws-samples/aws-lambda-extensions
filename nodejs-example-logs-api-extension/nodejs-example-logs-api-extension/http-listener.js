@@ -1,6 +1,6 @@
-const http = require('http')
+const http = require('http');
 
-function listen(port) {
+function listen(address, port) {
     const logsQueue = [];
     // init HTTP server for the Logs API subscription
     const server = http.createServer(function(request, response) {
@@ -28,9 +28,10 @@ function listen(port) {
             response.end("OK");
         }
     });
-    server.listen(port, "sandbox");
-    console.log(`Listening for logs at http://sandbox:${port}`);
-    return { logsQueue };
+    
+    server.listen(port, address);
+    console.log(`Listening for logs at http://${address}:${port}`);
+    return { logsQueue, server };
 }
 
 module.exports = {

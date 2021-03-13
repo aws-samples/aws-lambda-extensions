@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  go-example-logs-api-extension
+  
+  Sample SAM Template for go-example-logs-api-extension
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 5
+
+Resources:
+      
+  GoExampleLogsApiExtensionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      LayerName: go-example-logs-api-extension
+      Description: Go Example Logs API Lambda Extension Layer
+      ContentUri: .
+      CompatibleRuntimes:
+      - nodejs12.x
+      - python3.8
+      - java11
+      - dotnetcore3.1
+      LicenseInfo: MIT-0
+      RetentionPolicy: Delete
+
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: go-example-logs-api-extension-demo-function
+      CodeUri: hello-world/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Layers:
+      - !Ref GoExampleLogsApiExtensionLayer
+      Environment:
+        Variables:
+          LOGS_API_EXTENSION_S3_BUCKET:
+            Ref: LogExtensionsBucket
+      Policies:
+        - S3FullAccessPolicy:
+            BucketName: !Ref LogExtensionsBucket
+
+  LogExtensionsBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteAfterSevenDays
+            Status: "Enabled"
+            ExpirationInDays: 7
+
+Outputs:
+  GoExampleLogsApiExtensionLayer:
+    Description: Go Example Lambda Extension Layer Version ARN
+    Value: !Ref GoExampleLogsApiExtensionLayer
+  HelloWorldFunction:
+    Description: First Lambda Function ARN
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value: !GetAtt HelloWorldFunctionRole.Arn

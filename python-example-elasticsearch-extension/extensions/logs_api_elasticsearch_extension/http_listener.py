@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT-0
 
 import json
+import os
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Event, Thread
@@ -9,19 +10,25 @@ from threading import Event, Thread
 """ Demonstrates code to set up an HTTP listener and receive log events
 """
 
-RECEIVER_IP = "0.0.0.0"
+RECEIVER_NAME = "sandbox"
+LOCAL_DEBUGGING_IP = "0.0.0.0"
 RECEIVER_PORT = 4243
+
+def get_listener_address():
+    return RECEIVER_NAME if ("true" != os.getenv("AWS_SAM_LOCAL")) else LOCAL_DEBUGGING_IP
 
 def http_server_init(queue):
     def handler(*args):
         LogsHandler(queue, *args)
-    print(f"Initializing HTTP Server on {RECEIVER_IP}:{RECEIVER_PORT}")
-    server = HTTPServer((RECEIVER_IP, RECEIVER_PORT), handler)
+
+    listener_address = get_listener_address()
+    print(f"Initializing HTTP Server on {listener_address}:{RECEIVER_PORT}")
+    server = HTTPServer((listener_address, RECEIVER_PORT), handler)
 
     # Ensure that the server thread is scheduled so that the server binds to the port
     # and starts to listening before subscribe for the logs and ask for the next event.
     started_event = Event()
-    server_thread = Thread(target=serve, daemon=True, args=(started_event, server,))
+    server_thread = Thread(target=serve, daemon=True, args=(started_event, server,listener_address,))
     server_thread.start()
     rc = started_event.wait(timeout = 9)
     if rc is not True:
@@ -51,11 +58,11 @@ class LogsHandler(BaseHTTPRequestHandler):
             print(f"Error processing message: {e}")
 
 # Server thread
-def serve(started_event, server):
+def serve(started_event, server, listener_name):
     # Notify that this thread is up and running
     started_event.set()
     try:
-        print(f"Serving HTTP Server on {RECEIVER_IP}:{RECEIVER_PORT}")
+        print(f"Serving HTTP Server on {listener_name}:{RECEIVER_PORT}")
         server.serve_forever()
     except:
         print(f"Error in HTTP server {sys.exc_info()[0]}")
