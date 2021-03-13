@@ -56,11 +56,11 @@ class LogsHandler(BaseHTTPRequestHandler):
             print(f"Error processing message: {e}")
 
 # Server thread
-def serve(started_event, server, listenerName):
+def serve(started_event, server, listener_name):
     # Notify that this thread is up and running
     started_event.set()
     try:
-        print(f"extension.http_listener: Running HTTP Server on {listenerName}:{RECEIVER_PORT}")
+        print(f"extension.http_listener: Running HTTP Server on {listener_name}:{RECEIVER_PORT}")
         server.serve_forever()
     except:
         print(f"extension.http_listener: Error in HTTP server {sys.exc_info()[0]}", flush=True)
