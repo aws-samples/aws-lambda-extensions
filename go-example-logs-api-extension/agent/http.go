@@ -17,8 +17,8 @@ import (
 	"github.com/golang-collections/go-datastructures/queue"
 )
 
-// DefaulHttpListenerPort is used to set the URL where the logs will be sent by Logs API
-const DefaulHttpListenerPort = "1234"
+// DefaultHttpListenerPort is used to set the URL where the logs will be sent by Logs API
+const DefaultHttpListenerPort = "1234"
 
 // LogsApiHttpListener is used to listen to the Logs API using HTTP
 type LogsApiHttpListener struct {
@@ -36,12 +36,22 @@ func NewLogsApiHttpListener(lq *queue.Queue) (*LogsApiHttpListener, error) {
 	}, nil
 }
 
+func ListenOnAddress() string {
+	env_aws_local, ok := os.LookupEnv("AWS_SAM_LOCAL")
+	if ok && "true" == env_aws_local {
+		return ":" + DefaultHttpListenerPort
+	}
+
+	return "sandbox:" + DefaultHttpListenerPort
+}
+
 // Start initiates the server in a goroutine where the logs will be sent
 func (s *LogsApiHttpListener) Start() (bool, error) {
-	s.httpServer = &http.Server{Addr: ":" + DefaulHttpListenerPort}
+	address := ListenOnAddress()
+	s.httpServer = &http.Server{Addr: address}
 	http.HandleFunc("/", s.http_handler)
 	go func() {
-		logger.Infof("Serving agent on %s", ":"+DefaulHttpListenerPort)
+		logger.Infof("Serving agent on %s", address)
 		err := s.httpServer.ListenAndServe()
 		if err != http.ErrServerClosed {
 			logger.Errorf("Unexpected stop on Http Server: %v", err)
@@ -138,7 +148,7 @@ func (a HttpAgent) Init(agentID string) error {
 	}
 	destination := logsapi.Destination{
 		Protocol:   logsapi.HttpProto,
-		URI:        logsapi.URI(fmt.Sprintf("http://sandbox:%s", DefaulHttpListenerPort)),
+		URI:        logsapi.URI(fmt.Sprintf("http://sandbox:%s", DefaultHttpListenerPort)),
 		HttpMethod: logsapi.HttpPost,
 		Encoding:   logsapi.JSON,
 	}
