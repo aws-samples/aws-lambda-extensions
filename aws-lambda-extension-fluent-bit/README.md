@@ -3,7 +3,7 @@
 The provided code sample demonstrates how to get Fluent Bit set up for Lambda Extensions. 
 
 Note: 
-1. Supported Fluent Bit Version: 1.6
+1. Supported Fluent Bit: v1.6
 2. Supported AWS Fluent Bit Outputs: CloudWatch Logs, Kinesis Firehose and Kinesis Data Streams.
 
 This extension runs a goroutine that will do the following:
@@ -28,8 +28,11 @@ This extension runs a goroutine that will do the following:
 2. Configuration files: In `fluent-bit/` is a typical set of configuration files for Fluent Bit:
     
     - fluent-bit.conf: This is the main configuration file. 
-    - output.conf: This is where you can configure the output to the appropriate medium. See [here](https://docs.fluentbit.io/manual/pipeline/outputs) for configurable outputs.
-    - parsers.conf: This is the parser configuration.
+    - Output files: There are three example output files. You will need to change the `@INCLUDE` under `fluent-bit.conf` to use a specific one. See [here](https://docs.fluentbit.io/manual/pipeline/outputs) for a list of other configurable outputs.
+         - output-cw.conf: CloudWatch Logs
+         - output-firehose.conf: Kinesis Firehose
+         - output-kinesis.conf: Kinesis Data Streams
+    - parsers.conf: This is a specific parser configuration file for ingesting Lambda logs.
 
 ## Compile package and dependencies
 
@@ -70,7 +73,7 @@ aws lambda update-function-configuration --region <use your region> --function-n
 
 After invoking the function and receiving the shutdown event, you should now see log messages from Fluent Bit sent to the output of your choice. 
 
-Using the CloudWatch Logs output provided as an example configuration, a log message of the type `platform.start` will be written in a log stream `lambda-logs-platform.start` inside the log group `fluent-bit-lambda-logs`:
+Using the CloudWatch Logs output provided as an example configuration, several events will be written in a log stream `lambda-logs-lambda.http` inside the log group `fluent-bit-lambda-logs`. The events will look something like this:
 
 ```
    {
