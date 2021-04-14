@@ -10,6 +10,7 @@ from logs_api_elasticsearch_extension.logs_api_client import LogsAPIClient
 from logs_api_elasticsearch_extension.extensions_api_client import ExtensionsAPIClient
 from logs_api_elasticsearch_extension.elasticsearch_producer import ElasticsearchProducer
 from queue import Queue
+from datetime import datetime
 
 """Here is the sample extension code that stitches all of this together.
     - The extension will run two threads. The "main" thread, will register to ExtensionAPI and process its invoke and
@@ -44,7 +45,7 @@ class LogsAPIHTTPExtension():
         self.logs_api_client = LogsAPIClient()
         self.extensions_api_client = ExtensionsAPIClient()
         self.es_endpoint = os.environ['ES_ENDPOINT']
-        self.es_index = os.environ['ES_INDEX']
+        self.es_index = os.environ['ES_INDEX_PREFIX'] + "-" + datetime.strftime(datetime.now(), "%Y%m%d")
         self.es_producer = ElasticsearchProducer(self.agent_name, self.es_endpoint, self.es_index)
 
         # Register early so Runtime could start in parallel

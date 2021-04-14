@@ -14,11 +14,15 @@ class ElasticsearchProducer():
     def send(self, payload):
         url = f"https://{self.endpoint}/{self.index}/_doc"
         try:
-            if isinstance(payload["record"], str):
+            try:
                 converted = payload
-                converted["record"] = json.loads(payload["record"].replace("'",'"').rstrip())
-            else:
+                if not isinstance(payload["record"], dict):
+                    converted["record"] = json.loads(payload["record"].replace("'",'"').rstrip())
+                    if not isinstance(converted["record"], dict):
+                        converted["record"] = { "data": converted["record"]} 
+            except ValueError as e:
                 converted = payload
+                converted["record"] = { "data": payload["record"]}  
             req = urllib.request.Request(url)
             req.method = "POST"
             req.add_header("Content-Type", "application/json")
