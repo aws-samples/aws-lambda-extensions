@@ -23,6 +23,7 @@ In this repository you'll find a number of different sample projects and demos t
 * [Extension in Node.js](nodejs-example-extension/)
 * [Extension in Java 11](java-example-extension/)
 * [Extension in C#.NET](csharp-example-extension/)
+* [Logs API Adaptive Batching extension in Go](go-example-adaptive-batching-extension/)
 * [Logs API extension in Go](go-example-logs-api-extension/)
 * [Logs API extension in Python](python-example-logs-api-extension/)
 * [Logs API extension in Python for Elasticsearch](python-example-elasticsearch-extension/)
