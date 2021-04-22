@@ -24,6 +24,7 @@ public class ExtensionClient {
 			"        }";
 	private static final String LAMBDA_EXTENSION_IDENTIFIER = "Lambda-Extension-Identifier";
 	private static final String LAMBDA_EXTENSION_FUNCTION_ERROR_TYPE = "Lambda-Extension-Function-Error-Type";
+	private static final HttpClient client = HttpClient.newHttpClient();
 
 	/**
 	 * Registers the external extension to listen to "INVOKE" and "SHUTDOWN"
@@ -32,7 +33,6 @@ public class ExtensionClient {
 	 */
 	public static String registerExtension() {
 		final String registerUrl = String.format("%s/register", BASEURL);
-		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
 				.POST(HttpRequest.BodyPublishers.ofString(BODY))
 				.header("Content-Type", "application/json")
@@ -63,7 +63,6 @@ public class ExtensionClient {
 	public static String getNext(final String extensionId) {
 		try {
 			final String nextEventUrl = String.format("%s/event/next", BASEURL);
-			HttpClient client = HttpClient.newHttpClient();
 			HttpRequest request = HttpRequest.newBuilder()
 					.GET()
 					.header(LAMBDA_EXTENSION_IDENTIFIER, extensionId)
@@ -93,7 +92,6 @@ public class ExtensionClient {
 	public static String initError(final String extensionId, final String errorType) {
 		try {
 			final String nextEventUrl = String.format("%s/init/error", BASEURL);
-			HttpClient client = HttpClient.newHttpClient();
 			HttpRequest request = HttpRequest.newBuilder()
 					.POST(null)
 					.header(LAMBDA_EXTENSION_IDENTIFIER, extensionId)
@@ -124,7 +122,6 @@ public class ExtensionClient {
 	public static String exitError(final String extensionId, final String errorType) {
 		try {
 			final String nextEventUrl = String.format("%s/exit/error", BASEURL);
-			HttpClient client = HttpClient.newHttpClient();
 			HttpRequest request = HttpRequest.newBuilder()
 					.POST(null)
 					.header(LAMBDA_EXTENSION_IDENTIFIER, extensionId)
