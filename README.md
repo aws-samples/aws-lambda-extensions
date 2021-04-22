@@ -13,7 +13,6 @@ For more information, see [Using AWS Lambda extensions](https://docs.aws.amazon.
 
 In this repository you'll find a number of different sample projects and demos to help you get started with building your own extension. These include:
 
-* [Adaptive Batching extension in Go](go-example-adaptive-batching-extension/)
 * [AWS AppConfig extension demo](awsappconfig-extension-demo/)
 * [Custom runtime extension demo](custom-runtime-extension-demo/)
 * [Cache Extension demo](cache-extension-demo/)
@@ -28,6 +27,7 @@ In this repository you'll find a number of different sample projects and demos t
 * [Logs API extension in Python](python-example-logs-api-extension/)
 * [Logs API extension in Python for Elasticsearch](python-example-elasticsearch-extension/)
 * [Logs API extension in Node.js](nodejs-example-logs-api-extension/)
+* [Adaptive Batching extension in Go](go-example-adaptive-batching-extension/)
 * [Inter-process communication extension in Go](go-example-ipc-extension/)
 * [Crash uploader extension in Go](go-example-crash-uploader-extension/)
 * [Lambda layer extension using SAM](go-example-extension-sam-layer/)
