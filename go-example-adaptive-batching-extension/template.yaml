@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  go-example-adaptive-batching-extension
+  
+  Sample SAM Template for go-example-adaptive-batching-extension
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 5
+
+Resources:
+
+  GoExampleAdaptiveBatchingExtensionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      LayerName: go-example-adaptive-batching-extension
+      Description: Go Example Logs API Lambda Extension Layer
+      ContentUri: .
+      CompatibleRuntimes:
+      - nodejs12.x
+      - python3.8
+      - java11
+      - dotnetcore3.1
+      LicenseInfo: MIT-0
+      RetentionPolicy: Delete
+
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: adaptive-batching-extension-demo-function
+      CodeUri: hello-world/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Layers:
+      - !Ref GoExampleAdaptiveBatchingExtensionLayer
+      Environment:
+        Variables:
+          ADAPTIVE_BATCHING_EXTENSION_S3_BUCKET:
+            Ref: LogExtensionsBucket
+      Policies:
+        - Statement:
+          - Sid: S3Access
+            Effect: Allow
+            Action:
+            - s3:PutObject
+            - s3:AbortMultipartUpload
+            Resource: !Sub
+              - "arn:aws:s3:::${BucketName}/*"
+              - {BucketName: !Ref LogExtensionsBucket} 
+        - Statement: 
+          - Sid: S3BucketCreation
+            Effect: Allow
+            Action:
+            - s3:CreateBucket
+            Resource: !Sub
+              - "arn:aws:s3:::${BucketName}"
+              - {BucketName: !Ref LogExtensionsBucket} 
+
+
+
+  LogExtensionsBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteAfterSevenDays
+            Status: "Enabled"
+            ExpirationInDays: 7
+      VersioningConfiguration:
+        Status: "Enabled"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+
+Outputs:
+  GoExampleAdaptiveBatchingExtensionLayer:
+    Description: Go Example Lambda Extension Layer Version ARN
+    Value: !Ref GoExampleAdaptiveBatchingExtensionLayer
+  HelloWorldFunction:
+    Description: First Lambda Function ARN
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value: !GetAtt HelloWorldFunctionRole.Arn

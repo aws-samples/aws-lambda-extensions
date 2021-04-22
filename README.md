@@ -27,6 +27,7 @@ In this repository you'll find a number of different sample projects and demos t
 * [Logs API extension in Python](python-example-logs-api-extension/)
 * [Logs API extension in Python for Elasticsearch](python-example-elasticsearch-extension/)
 * [Logs API extension in Node.js](nodejs-example-logs-api-extension/)
+* [Adaptive Batching extension in Go](go-example-adaptive-batching-extension/)
 * [Inter-process communication extension in Go](go-example-ipc-extension/)
 * [Crash uploader extension in Go](go-example-crash-uploader-extension/)
 * [Lambda layer extension using SAM](go-example-extension-sam-layer/)
