@@ -22,7 +22,7 @@ const (
 
 	// Maximum values that rates can hold. If exceeded, the maximum value will be assumed.
 	// Protect users from using too much lambda memory.
-	MAX_SHIP_RATE_BYTES int = 50 * 1024 * 1024 // Maximum for bytes ship rate 100 megabytes
+	MAX_SHIP_RATE_BYTES int = 50 * 1024 * 1024 // Maximum for bytes ship rate 50 megabytes
 )
 
 type MetricsMonitor struct {
@@ -95,6 +95,7 @@ func (monitor *MetricsMonitor) Reset() {
 // Helper function
 // Given an environment variable, read it in and set the proper value
 // Returns the value received, value will never exceed the maximum value
+// Negative maximum values indicate no maximum should be enforced
 func retrieveEnvironmentVariable(variable string, defaultValue int64, maxValue int64) (output int64) {
 	// Fetch environment variable
 	valueString, present := os.LookupEnv(variable)

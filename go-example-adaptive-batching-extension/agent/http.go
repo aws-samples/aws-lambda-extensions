@@ -146,8 +146,9 @@ func (a HttpAgent) Init(agentID string) error {
 
 	var eventTypes []logsapi.EventType
 
-	// Nothing included
+	// No Json included
 	if inputJson == "" {
+		// Hold defaults
 		eventTypes = append(eventTypes, logsapi.Platform, logsapi.Function)
 		httpLogger.Info("ADAPTIVE_BATCHING_EXTENSION_LOG_TYPES not included, subscribing to default log types")
 	} else if !json.Valid(inputJsonBytes) {
@@ -172,7 +173,7 @@ func (a HttpAgent) Init(agentID string) error {
 			httpLogger.Info("LogTypes in ADAPTIVE_BATCHING_EXTENSION_LOG_TYPES does not include any elements, subscribing to default log types")
 		}
 
-		// otherwise loop through elements, and check if required elements are included
+		// loop through elements, and check if required elements are included
 
 		for _, logType := range jsonArray {
 			switch logType {

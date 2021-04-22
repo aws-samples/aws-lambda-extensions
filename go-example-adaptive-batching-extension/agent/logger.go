@@ -24,8 +24,6 @@ import (
 var logger = log.WithFields(log.Fields{"agent": "logsApiAgent"})
 
 const (
-	// MAX_RETRIES is the maximum number or retrials before failing when uploading part operation fails.
-	MAX_RETRIES = 3
 	// MAX_PART_SIZE is the minimum size that a part needs to have when uploading to S3 with multipart uploader.
 	// Only the final part is allowed to be smaller than 5MB for a successful multipart upload.
 	// 5 * 1024 * 1024 = 5MB = 5242880B
@@ -90,7 +88,7 @@ func NewS3Logger() (*S3Logger, error) {
 	}, nil
 }
 
-// ResetLogger renames the logger and resets the logBuffer
+// ResetLogger resets the log buffer and generates a new file name
 func (l *S3Logger) reset() {
 	l.logBuffer.Reset()
 	l.logBuffer.Grow(2 * MAX_PART_SIZE)
@@ -173,6 +171,8 @@ func createBucket(bucket string) error {
 	return nil
 }
 
+// Create a unique file name
+// Format: {function-name}-{timestamp}-{uuid}
 func generateFileName() string {
 
 	// Get file name
