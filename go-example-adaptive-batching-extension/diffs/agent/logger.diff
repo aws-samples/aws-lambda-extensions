@@ -1,8 +1,0 @@
-74c74
-< 	bucket, present := os.LookupEnv("LOGS_API_EXTENSION_S3_BUCKET")
----
-> 	bucket, present := os.LookupEnv("ADAPTIVE_BATCHING_EXTENSION_S3_BUCKET")
-76c76
-< 		return nil, errors.New("Environment variable LOGS_API_EXTENSION_S3_BUCKET is not set.")
----
-> 		return nil, errors.New("Environment variable ADAPTIVE_BATCHING_EXTENSION_S3_BUCKET is not set.")
