@@ -22,7 +22,7 @@ const (
 
 	// Maximum values that rates can hold. If exceeded, the maximum value will be assumed.
 	// Protect users from using too much lambda memory.
-	MAX_SHIP_RATE_BYTES int = 100 * 1024 * 1024 // Maximum for bytes ship rate 100 megabytes
+	MAX_SHIP_RATE_BYTES int = 50 * 1024 * 1024 // Maximum for bytes ship rate 100 megabytes
 )
 
 type MetricsMonitor struct {
@@ -76,7 +76,7 @@ func (monitor *MetricsMonitor) ShouldShip() bool {
 		metricLogger.Info("Invoke threshold met, ", monitor.invokeCount, " invokes counted.")
 	} else if timeElapsed >= monitor.shipRateMilliseconds {
 		shouldShip = true
-		metricLogger.Info("Time threshold met, ", timeElapsed, "milliseconds elapsed.")
+		metricLogger.Info("Time threshold met, ", timeElapsed, " milliseconds elapsed.")
 	} else if bytesInQueue >= int64(monitor.shipRateBytes) {
 		shouldShip = true
 		metricLogger.Info("Log size threshold met, log is ", bytesInQueue, " bytes .")

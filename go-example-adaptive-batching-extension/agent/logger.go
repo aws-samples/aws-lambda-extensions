@@ -37,7 +37,9 @@ type S3Logger struct {
 	svc       *session.Session
 	bucket    string
 	logBuffer *bytes.Buffer
+	prefix    string
 	fileName  string
+	uploader  *s3manager.Uploader
 }
 
 // NewS3Logger returns an S3 Logger
@@ -56,22 +58,40 @@ func NewS3Logger() (*S3Logger, error) {
 	// Create the S3 Bucket
 	err := createBucket(bucket)
 	if err != nil {
+		logger.Error("Error creating S3 Bucket")
 		return nil, err
 	}
 
+	// Create the prefix for the s3 file. Unique to the sandbox environment that this extension is running in
+	// Format {year}-{month}-{day}-{uuid}
+	environmentId := uuid.New().String()
+	t := time.Now().Format("2006-01-02")
+	prefix := t + "-" + environmentId + "/"
+
+	logger.Info("Environment ID: " + environmentId)
+
+	// Create filename
 	fileName := generateFileName()
 
+	svc := session.Must(session.NewSession())
+
+	// Initialize uploader
+	uploader := s3manager.NewUploader(svc, func(u *s3manager.Uploader) {
+		u.PartSize = MAX_PART_SIZE
+	})
+
 	return &S3Logger{
-		svc:       session.Must(session.NewSession()),
+		svc:       svc,
 		bucket:    bucket,
 		logBuffer: buffer,
 		fileName:  fileName,
+		prefix:    prefix,
+		uploader:  uploader,
 	}, nil
 }
 
 // ResetLogger renames the logger and resets the logBuffer
 func (l *S3Logger) reset() {
-	// Create a new file name
 	l.logBuffer.Reset()
 	l.logBuffer.Grow(2 * MAX_PART_SIZE)
 	l.fileName = generateFileName()
@@ -86,7 +106,6 @@ func (l *S3Logger) WriteLog(log string) {
 // FlushLog writes the log buffer to S3 in a file
 func (l *S3Logger) FlushLog() error {
 	logger.Info("Flushing Logger to S3")
-	// Generate key for bucket
 
 	// If the log buffer is empty, then return and don't do anything
 	if l.logBuffer.Len() == 0 {
@@ -95,24 +114,25 @@ func (l *S3Logger) FlushLog() error {
 		return nil
 	}
 
-	// Create new uploader
-	uploader := s3manager.NewUploader(l.svc, func(u *s3manager.Uploader) {
-		u.PartSize = MAX_PART_SIZE
-	})
+	// Include the prefix in the file name
+	fullFileName := l.prefix + l.fileName
 
+	// Setup s3 inputs
 	upParams := s3manager.UploadInput{
 		Bucket: &l.bucket,
-		Key:    &l.fileName,
+		Key:    &fullFileName,
 		Body:   l.logBuffer,
 	}
 
 	// Upload the data
-	_, err := uploader.Upload(&upParams)
+	_, err := l.uploader.Upload(&upParams)
 
 	// If no errors, reset
 	if err == nil {
 		l.reset()
 		logger.Info("New file written to S3: ", l.fileName)
+	} else {
+		logger.Error("Error writing ", l.fileName, "to S3")
 	}
 
 	return err
