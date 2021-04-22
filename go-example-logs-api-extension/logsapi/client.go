@@ -41,6 +41,13 @@ const (
 	Extension EventType = "extension"
 )
 
+type SubEventType string
+
+const (
+	// RuntimeDone event is sent when lambda function is finished it's execution
+	RuntimeDone SubEventType = "platform.runtimeDone"
+)
+
 // BufferingCfg is the configuration set for receiving logs from Logs API. Whichever of the conditions below is met first, the logs will be sent
 type BufferingCfg struct {
 	// MaxItems is the maximum number of events to be buffered in memory. (default: 10000, minimum: 1000, maximum: 10000)
@@ -86,11 +93,19 @@ type Destination struct {
 	Encoding   HttpEncoding `json:"encoding"`
 }
 
+type SchemaVersion string
+
+const (
+	SchemaVersion20210318 = "2021-03-18"
+	SchemaVersionLatest   = SchemaVersion20210318
+)
+
 // SubscribeRequest is the request body that is sent to Logs API on subscribe
 type SubscribeRequest struct {
-	EventTypes   []EventType  `json:"types"`
-	BufferingCfg BufferingCfg `json:"buffering"`
-	Destination  Destination  `json:"destination"`
+	SchemaVersion SchemaVersion `json:"schemaVersion"`
+	EventTypes    []EventType   `json:"types"`
+	BufferingCfg  BufferingCfg  `json:"buffering"`
+	Destination   Destination   `json:"destination"`
 }
 
 // SubscribeResponse is the response body that is received from Logs API on subscribe
@@ -103,9 +118,10 @@ func (c *Client) Subscribe(types []EventType, bufferingCfg BufferingCfg, destina
 
 	data, err := json.Marshal(
 		&SubscribeRequest{
-			EventTypes:   types,
-			BufferingCfg: bufferingCfg,
-			Destination:  destination,
+			SchemaVersion: SchemaVersionLatest,
+			EventTypes:    types,
+			BufferingCfg:  bufferingCfg,
+			Destination:   destination,
 		})
 	if err != nil {
 		return nil, errors.WithMessage(err, "failed to marshal SubscribeRequest")

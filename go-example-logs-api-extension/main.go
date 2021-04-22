@@ -4,17 +4,18 @@
 package main
 
 import (
+	"aws-lambda-extensions/go-example-logs-api-extension/agent"
+	"aws-lambda-extensions/go-example-logs-api-extension/extension"
+	"aws-lambda-extensions/go-example-logs-api-extension/logsapi"
 	"context"
 	"fmt"
+	"github.com/golang-collections/go-datastructures/queue"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"syscall"
-
-	"aws-lambda-extensions/go-example-logs-api-extension/agent"
-	"aws-lambda-extensions/go-example-logs-api-extension/extension"
-	"github.com/golang-collections/go-datastructures/queue"
-	log "github.com/sirupsen/logrus"
 )
 
 // INITIAL_QUEUE_SIZE is the initial size set for the synchronous logQueue
@@ -54,14 +55,16 @@ func main() {
 	// and process the logs from main goroutine (consumer)
 	logQueue := queue.New(INITIAL_QUEUE_SIZE)
 	// Helper function to empty the log queue
-	flushLogQueue := func() {
-		for !logQueue.Empty() {
+	var logsStr string = ""
+	flushLogQueue := func(force bool) {
+		for !(logQueue.Empty() && (force || strings.Contains(logsStr, string(logsapi.RuntimeDone)))) {
 			logs, err := logQueue.Get(1)
 			if err != nil {
 				logger.Error(printPrefix, err)
 				return
 			}
-			err = logsApiLogger.PushLog(fmt.Sprintf("%v", logs[0]))
+			logsStr = fmt.Sprintf("%v", logs[0])
+			err = logsApiLogger.PushLog(logsStr)
 			if err != nil {
 				logger.Error(printPrefix, err)
 				return
@@ -98,11 +101,11 @@ func main() {
 				return
 			}
 			// Flush log queue in here after waking up
-			flushLogQueue()
+			flushLogQueue(false)
 			// Exit if we receive a SHUTDOWN event
 			if res.EventType == extension.Shutdown {
 				logger.Info(printPrefix, "Received SHUTDOWN event")
-				flushLogQueue()
+				flushLogQueue(true)
 				logsApiAgent.Shutdown()
 				logger.Info(printPrefix, "Exiting")
 				return
