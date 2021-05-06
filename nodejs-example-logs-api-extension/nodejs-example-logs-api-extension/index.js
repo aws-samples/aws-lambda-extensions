@@ -110,8 +110,8 @@ const SUBSCRIPTION_BODY = {
 
         switch (event.eventType) {
             case EventType.SHUTDOWN:
-                handleShutdown(event);
                 await uploadLogs(); // upload remaining logs, during shutdown event
+                handleShutdown(event);
                 break;
             case EventType.INVOKE:
                 handleInvoke(event);
