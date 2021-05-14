@@ -5,6 +5,8 @@ package example;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublisher;
+import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.util.Optional;
 
@@ -84,16 +86,18 @@ public class ExtensionClient {
 	}
 
 	/**
-	 * InitError reports an initialization error to the platform. Call it when you registered but failed to initialize
+	 * InitError reports an initialization error to the platform. Call it when the extension registered but failed to initialize
 	 * @param extensionId ID of the extension received as response from registration event
 	 * @param errorType error type
+	 * @param errorMessage error message
+	 * @param stackTrace error stack trace
 	 * @return response body
 	 */
-	public static String initError(final String extensionId, final String errorType) {
+	public static String initError(final String extensionId, final String errorType, String errorMessage, String stackTrace) {
 		try {
 			final String nextEventUrl = String.format("%s/init/error", BASEURL);
 			HttpRequest request = HttpRequest.newBuilder()
-					.POST(null)
+					.POST(errorBodyPublisher(errorType, errorMessage, stackTrace))
 					.header(LAMBDA_EXTENSION_IDENTIFIER, extensionId)
 					.header(LAMBDA_EXTENSION_FUNCTION_ERROR_TYPE, errorType)
 					.uri(URI.create(nextEventUrl))
@@ -114,16 +118,18 @@ public class ExtensionClient {
 	}
 
 	/**
-	 * ExitError reports an error to the platform before exiting. Call it when you encounter an unexpected failure
+	 * ExitError reports an error to the platform before exiting. Call it when the extension encounters an unexpected failure
 	 * @param extensionId ID of the extension received as response from registration event
 	 * @param errorType error type
+	 * @param errorMessage error message
+	 * @param stackTrace error stack trace
 	 * @return response body
 	 */
-	public static String exitError(final String extensionId, final String errorType) {
+	public static String exitError(final String extensionId, final String errorType, String errorMessage, String stackTrace) {		
 		try {
 			final String nextEventUrl = String.format("%s/exit/error", BASEURL);
 			HttpRequest request = HttpRequest.newBuilder()
-					.POST(null)
+					.POST(errorBodyPublisher(errorType, errorMessage, stackTrace))
 					.header(LAMBDA_EXTENSION_IDENTIFIER, extensionId)
 					.header(LAMBDA_EXTENSION_FUNCTION_ERROR_TYPE, errorType)
 					.uri(URI.create(nextEventUrl))
@@ -142,4 +148,23 @@ public class ExtensionClient {
 
 		return null;
 	}
+	
+	/**
+	 * A utility function to format error body parameters into a request BodyPublisher
+	 * @param errorType - The type of error
+	 * @param errorMessage - The error message 
+	 * @param stackTrace - The stack trace of the error
+	 * @return - A BodyPublisher object with a request body containing errorType, errorMessage and stackTrace
+	 */
+	public static BodyPublisher errorBodyPublisher(String errorType, String errorMessage, String stackTrace) {
+		return BodyPublishers.ofString(
+				String.format(
+					"{\"errorType\":\"%s\","
+					+ "\"errorMessage\":\"%s\","
+					+ "\"stackTrace\":\"%s\"}",
+					errorType, errorMessage, stackTrace
+				)
+		);
+	}
+	
 }
