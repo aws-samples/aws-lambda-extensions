@@ -1,6 +1,8 @@
 # Example Extension in Go
 
-The provided code sample demonstrates how to get a basic extension written in Go up and running.
+The provided code sample demonstrates how to get a basic extension written in Go up and running. This extension can be used with runtimes that [support extensions](https://docs.aws.amazon.com/lambda/latest/dg/using-extensions.html) 
+
+***Note:*** *This example shows an extension written in Go, not an extension running in the Go runtime. The Go 1.x runtime does not support extensions. To support extensions, you can deploy Go functions on the provided.al2 runtime. For more information, see [Migrating Lambda functions to Amazon Linux 2](http://aws.amazon.com/blogs/compute/migrating-aws-lambda-functions-to-al2/).*
 
 ## Compile package and dependencies
 
