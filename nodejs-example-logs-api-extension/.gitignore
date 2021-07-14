@@ -1,2 +1,5 @@
 # nodejs dependencies
 node_modules
+
+# zip
+*.zip

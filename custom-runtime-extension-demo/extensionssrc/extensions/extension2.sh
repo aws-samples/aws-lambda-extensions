@@ -25,21 +25,20 @@ forward_sigterm_and_wait() {
 
 # Registration
 HEADERS="$(mktemp)"
-echo "[${LAMBDA_EXTENSION_NAME}] Registering..."
-sleep 1
+echo "[${LAMBDA_EXTENSION_NAME}] Registering at http://${AWS_LAMBDA_RUNTIME_API}/2020-01-01/extension/register"
   curl -sS -LD "$HEADERS" -XPOST "http://${AWS_LAMBDA_RUNTIME_API}/2020-01-01/extension/register" --header "Lambda-Extension-Name: ${LAMBDA_EXTENSION_NAME}" -d "{ \"events\": [\"INVOKE\", \"SHUTDOWN\"]}" > $TMPFILE
 
 RESPONSE=$(<$TMPFILE)
 HEADINFO=$(<$HEADERS)
-echo "[${LAMBDA_EXTENSION_NAME}] Register response: ${RESPONSE}"
-sleep 1
 # Extract Extension ID from response headers
 EXTENSION_ID=$(grep -Fi Lambda-Extension-Identifier "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
+echo "[${LAMBDA_EXTENSION_NAME}] Registration response: ${RESPONSE} with EXTENSION_ID $(grep -Fi Lambda-Extension-Identifier "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)"
+
 
 # Event processing
 while true
 do
-  echo "[${LAMBDA_EXTENSION_NAME}] Waiting for event..."
+  echo "[${LAMBDA_EXTENSION_NAME}] Waiting for event. Get /next event from http://${AWS_LAMBDA_RUNTIME_API}/2020-01-01/extension/event/next"
 
   # Get an event. The HTTP request will block until one is received
   curl -sS -L -XGET "http://${AWS_LAMBDA_RUNTIME_API}/2020-01-01/extension/event/next" --header "Lambda-Extension-Identifier: ${EXTENSION_ID}" > $TMPFILE &

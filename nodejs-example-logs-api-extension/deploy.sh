@@ -1,10 +1,17 @@
 cd nodejs-example-logs-api-extension
 chmod +x index.js
 npm install
-cd ..
+cd -
 
 chmod +x extensions/nodejs-example-logs-api-extension
-zip -r extension.zip .
+
+archive="extension.zip"
+if [ -f $archive ] ; then
+    rm $archive
+fi
+
+zip -r $archive ./nodejs-example-logs-api-extension
+zip -r $archive ./extensions
 
 aws lambda publish-layer-version \
  --layer-name "nodejs-example-logs-api-extension" \
