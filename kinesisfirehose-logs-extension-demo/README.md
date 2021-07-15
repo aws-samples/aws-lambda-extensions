@@ -130,7 +130,7 @@ After invoking the function and receiving the shutdown event, you should now see
 * Login to AWS console:
     * Navigate to the S3 folder (`BucketName`) available part of the SAM output.
     * We can see the logs successly written to the S3 bucket, partitioned based on date
-  ![s3](images/s3.png)
+  ![s3](images/S3.png)
   
     * Navigate to "/aws/lambda/${functionname}" log group inside AWS CloudWatch service.
     * We shouldn't see any logs created under this log group as we have denied access to write any logs from the lambda function.
