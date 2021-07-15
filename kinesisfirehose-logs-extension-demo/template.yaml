@@ -1,0 +1,155 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  kinesisfirehose-logs-extension-demo
+  
+  Sample SAM Template for kinesisfirehose-logs-extension-demo
+
+Parameters:
+  FirehoseStreamName:
+    Type: String
+    Default: lambda-logs-direct-s3-no-cloudwatch
+    Description: "Firehose stream name"
+  FirehoseS3Prefix:
+    Type: String
+    Default: firehose/
+    Description: "The S3 Key prefix for Kinesis Firehose."
+  FirehoseCompressionFormat:
+    Type: String
+    Default: GZIP
+    AllowedValues: [UNCOMPRESSED, GZIP, Snappy]
+    Description: "Compression format used by Kinesis Firehose"
+  FirehoseBufferingInterval:
+    Type: Number
+    Default: 60
+    MinValue: 60
+    MaxValue: 900
+    Description: "How long Firehose will wait before writing a new batch into S3"
+  FirehoseBufferingSize:
+    Type: Number
+    Default: 10
+    MinValue: 1
+    MaxValue: 128
+    Description: "Maximum batch size in MB"
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 120
+    MemorySize: 1024
+
+Resources:
+  KinesisFireHoseLogsApiExtensionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      LayerName: kinesisfirehose-logs-extension-demo
+      Description: Send logs to kinesis firehose using logs API Extension in Go
+      ContentUri: .
+      CompatibleRuntimes:
+      - nodejs12.x
+      - python3.8
+      - java11
+      - dotnetcore3.1
+      LicenseInfo: MIT-0
+      RetentionPolicy: Delete
+
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - DeliveryStream
+    Properties:
+      FunctionName: kinesisfirehose-logs-extension-demo-function
+      CodeUri: hello-world/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Layers:
+      - !Ref KinesisFireHoseLogsApiExtensionLayer
+      Environment:
+        Variables:
+          AWS_KINESIS_STREAM_NAME: !Ref FirehoseStreamName
+      Policies:
+        - Statement:
+          - Sid: KinesisStreamFullAccess
+            Effect: Allow
+            Action:
+              - firehose:*
+            Resource: !GetAtt DeliveryStream.Arn
+          - Sid: CloudWatchLogsDeny
+            Effect: Deny
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+
+  DeliveryBucket:
+    Type: AWS::S3::Bucket
+
+  DeliveryStream:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamName: !Ref FirehoseStreamName
+      DeliveryStreamType: DirectPut
+      ExtendedS3DestinationConfiguration:
+        Prefix: !Ref FirehoseS3Prefix
+        BucketARN: !GetAtt DeliveryBucket.Arn
+        BufferingHints:
+          IntervalInSeconds: !Ref FirehoseBufferingInterval
+          SizeInMBs: !Ref FirehoseBufferingSize
+        CompressionFormat: !Ref FirehoseCompressionFormat
+        RoleARN: !GetAtt DeliveryStreamRole.Arn
+
+  DeliveryStreamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service: firehose.amazonaws.com
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'sts:ExternalId': !Ref 'AWS::AccountId'
+
+  DeliveryStreamPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      Roles:
+        - !Ref DeliveryStreamRole
+      PolicyName: firehose_delivery_policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:AbortMultipartUpload'
+              - 's3:GetBucketLocation'
+              - 's3:GetObject'
+              - 's3:ListBucket'
+              - 's3:ListBucketMultipartUploads'
+              - 's3:PutObject'
+            Resource:
+              - !GetAtt DeliveryBucket.Arn
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref DeliveryBucket
+                  - '*'
+Outputs:
+  KinesisFireHoseLogsApiExtensionLayer:
+    Description: Kinesis Log emiter Lambda Extension Layer Version ARN
+    Value: !Ref KinesisFireHoseLogsApiExtensionLayer
+  HelloWorldFunction:
+    Description: First Lambda Function ARN
+    Value: !GetAtt HelloWorldFunction.Arn
+  KinesisFireHoseIamRole:
+    Description: Kinesis firehose IAM role
+    Value: !GetAtt DeliveryStream.Arn
+  BucketName:
+    Description: The bucket where data will be stored
+    Value: !Ref DeliveryBucket

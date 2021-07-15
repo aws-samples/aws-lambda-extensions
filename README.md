@@ -55,6 +55,8 @@ In this repository you will find a number of demos and sample projects from AWS 
 
 * [Demo: Logs to Amazon S3 extension: container image ](s3-logs-extension-demo-container-image/): Demo logs extension to receive logs directly from Lambda and send them to S3. This example packages the extension and function as separate container images. The demo is deployed using AWS SAM.
 
+* [Demo: Logs to Kinesis firehose Logs API extension](kinesisfirehose-logs-extension-demo/): How to get a basic logs API extension for AWS Kinesis Firehose written in Go. The extension explains the overall approach to streamline and and centralize log collection using Kinesis firehose. The extension runs a local HTTP listener and subscribes to a stream of function and platform logs using the Logs API. It buffers them and sends them to Kinesis firehose periodically. The demo gets deployed using AWS SAM.
+
 ### Other extension examples
 
 * [Adaptive Batching extension in Go](go-example-adaptive-batching-extension/): How to use the Logs API extension written in Go to adaptively batch log data to a destination (S3). The logs are batched up and stored by the extension. Three environment variables with default values dictate when the logs are send to the destination. If any of the conditions are met, the logs queued will be shipped to S3.
