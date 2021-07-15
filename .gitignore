@@ -78,10 +78,6 @@ out/
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
-**/.idea/*
-kinesisfirehose-logs-extension-demo/bin/**
-
-**/go-example-logs-api-extension/**
 
 # JIRA plugin
 atlassian-ide-plugin.xml
