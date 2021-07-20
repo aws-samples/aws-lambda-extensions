@@ -1,20 +1,56 @@
-# Centralized logging with Kinesis Firehose using Lambda Extensions
+# Centralize log collection with Kinesis Firehose using Lambda Extensions
 
 ## Introduction
 
-The provided code sample shows how to get send logs directly to kinesis firehose without sending them to AWS CloudWatch
+This pattern walks through an approach to centralize log collection for lambda function with Kinesis firehose using external extensions. The provided code sample shows how to get send logs directly to kinesis firehose without sending them to AWS CloudWatch service.
 
 > Note: This is a simple example extension to help you investigate an approach to centralize the log aggregation. This example code is not production ready. Use it with your own discretion after testing thoroughly.
 
 This sample extension:
 
-* Subscribes to receive platform and function logs.
-* Runs with a main, and a helper goroutine: The main goroutine registers to ExtensionAPI and process its invoke and shutdown events (see nextEvent call). The helper goroutine:
-    - starts a local HTTP server at the provided port (default 1234) that receives requests from Logs API
-    - puts the logs in a synchronized queue (Producer) to be processed by the main goroutine (Consumer)
-* Writes the received logs to AWS Kinesis firehose
+* Subscribes to receive `platform` and `function` logs.
+* Runs with a main, and a helper goroutine: The main goroutine registers to `ExtensionAPI` and process its `invoke` and `shutdown` events. The helper goroutine:
+  * starts a local HTTP server at the provided port (default 1234) that receives requests from Logs API with `NextEvent` method call
+  * puts the logs in a synchronized queue (Producer) to be processed by the main goroutine (Consumer)
+* The main goroutine writes the received logs to AWS Kinesis firehose, which gets stored in AWS S3
+
+## Amazon Kinesis Data firehose
+
+Amazon Kinesis Data Firehose is the easiest way to reliably load streaming data into data lakes, data stores, and analytics services. It can capture, transform, and deliver streaming data to Amazon S3, Amazon Redshift, Amazon Elasticsearch Service, generic HTTP endpoints, and service providers like Datadog, New Relic, MongoDB, and Splunk, read more about it [here](https://aws.amazon.com/kinesis/data-firehose)
+
+> Note: The code sample provided part of this pattern delivers logs from Kinesis firehose to Amazon S3
+
+## Lambda extensions
+
+Lambda Extensions, a new way to easily integrate Lambda with your favorite monitoring, observability, security, and governance tools. Extensions are a new way for tools to integrate deeply into the Lambda environment. There is no complex installation or configuration, and this simplified experience makes it easier for you to use your preferred tools across your application portfolio today. You can use extensions for use-cases such as:
+
+* capturing diagnostic information before, during, and after function invocation
+* automatically instrumenting your code without needing code changes
+* fetching configuration settings or secrets before the function invocation
+* detecting and alerting on function activity through hardened security agents, which can run as separate processes from the function
+
+read more about it [here](https://aws.amazon.com/blogs/compute/introducing-aws-lambda-extensions-in-preview/)
+
+> Note: The code sample provided part of this pattern uses **external** extension to listen to log events from the lambda function
+
+## Need to centralize log collection
+
+Having a centeralized log collection mechanism using kinesis firehose provides the following benefits:
+
+* helps to collect logs from different sources in one place. Even though the sample provided sends logs from Lambda, log routers like `Fluentbit` and `Firelens` can be used to send logs directly to kinesis firehose from container orchestrators like `EKS` and `ECS`.
+* define and standarize the transformations before the log gets delivered to downstream systems like S3, elastic search, redshift etc
+* provides a secure storage area for log data, before it gets written out to the disk. In the event of machine/application failure we still have access to the logs emitted from the source machine/application
 
 ## Architecture
+
+### AWS Services
+
+* AWS Lambda
+* AWS Lambda extension
+* AWS KinesisFirehose
+* AWS S3
+
+### High level architecture
 
 Here is the high level view of all the components
 
@@ -22,10 +58,23 @@ Here is the high level view of all the components
 
 Once deployed the overall flow looks like below:
 
-* On start-up, the extension registers to receive logs for `Platform` and `Function` events via a local HTTP server.
-* When the extension receives these logs, it takes care of buffering the data and writing it to AWS Kinesis Firehose using direct `PUT` records
+* On start-up, the extension subscribes to receive logs for `Platform` and `Function` events.
+* A local HTTP server is started inside the external extension which receives the logs.
+* The extension also takes care of buffering the recieved log events in a synchronized queue and writing it to AWS Kinesis Firehose via direct `PUT` records
 
 > Note: Firehose stream name gets specified as an environment variable (`AWS_KINESIS_STREAM_NAME`)
+
+* The lambda function won't be able to send any logs events to AWS CloudWatch service due to the following explict `DENY` policy:
+
+```yaml
+Sid: CloudWatchLogsDeny
+Effect: Deny
+Action:
+  - logs:CreateLogGroup
+  - logs:CreateLogStream
+  - logs:PutLogEvents
+Resource: arn:aws:logs:*:*:*
+```
 
 * The Kinesis Firehose stream configured part of this sample sends log directly to `AWS S3` (gzip compressed).
 
@@ -33,7 +82,18 @@ Once deployed the overall flow looks like below:
 
 AWS SAM template available part of the root directory can be used for deploying the sample lambda function with this extension
 
+### Pre-requistes
+
+* AWS SAM CLI needs to get installed, follow the [link](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html) to learn how to install them
+
 ### Build
+
+Check out the code by running the following command:
+
+```bash
+mkdir kinesisfirehose-logs-extension-demo && cd kinesisfirehose-logs-extension-demo
+git clone https://github.com/hariohmprasath/load-testing-serverless-apps.git .
+```
 
 Run the following command from the root directory
 
@@ -66,7 +126,7 @@ Commands you can use next
 [*] Deploy: sam deploy --guided
 ```
 
-### Deploy
+### Deployment
 
 Run the following command to deploy the sample lambda function with the extension
 
@@ -74,7 +134,17 @@ Run the following command to deploy the sample lambda function with the extensio
 sam deploy --guided
 ```
 
-> Note: Either you can customize the parameters, or leave it as default to start the deployment
+The following parameters can be customized part of the deployment
+
+| Parameter  | Description | Default |
+| ------------- | ------------- | ----|
+| FirehoseStreamName  | Firehose stream name |  lambda-logs-direct-s3-no-cloudwatch |
+| FirehoseS3Prefix  | The S3 Key prefix for Kinesis Firehose |  lambda-logs-direct-s3-no-cloudwatch |
+| FirehoseCompressionFormat  | Compression format used by Kinesis Firehose, allowed value - `UNCOMPRESSED, GZIP, Snappy` |  GZIP |
+| FirehoseBufferingInterval  | How long Firehose will wait before writing a new batch into S3 |  60 |
+| FirehoseBufferingSize  | Maximum batch size in MB |  10 |
+
+> Note: We can either customize the parameters, or leave it as default to proceed with the deployment
 
 **Output**
 
@@ -89,7 +159,7 @@ Value               arn:aws:lambda:us-east-1:xxx:layer:kinesisfirehose-logs-exte
 
 Key                 BucketName
 Description         The bucket where data will be stored
-Value               sam-app-deliverybucket-1lrmn02k8mxbc
+Value               sam-app-deliverybucket-xxxx
 
 Key                 KinesisFireHoseIamRole
 Description         Kinesis firehose IAM role
@@ -125,15 +195,15 @@ The function should return ```"StatusCode": 200```, with the below output
 }
 ```
 
-After invoking the function and receiving the shutdown event, you should now see log messages from the example extension written to an S3 bucket.
+In a few minutes after the successfully invocation of the lambda function, we should start seeing the log messages from the example extension written to an S3 bucket.
 
 * Login to AWS console:
-    * Navigate to the S3 folder (`BucketName`) available part of the SAM output.
-    * We can see the logs successly written to the S3 bucket, partitioned based on date
+  * Navigate to the S3 bucket mentioned under the parameter `BucketName` in the SAM output.
+  * We can see the logs successly written to the S3 bucket, partitioned based on date in `GZIP` format.
   ![s3](images/S3.png)
   
-    * Navigate to "/aws/lambda/${functionname}" log group inside AWS CloudWatch service.
-    * We shouldn't see any logs created under this log group as we have denied access to write any logs from the lambda function.
+  * Navigate to `"/aws/lambda/${functionname}"` log group inside AWS CloudWatch service.
+  * We shouldn't see any logs created under this log group as we have denied access to write any logs from the lambda function.
   ![cloudwatch](images/CloudWatch.png)
 
 ## Cleanup
@@ -152,4 +222,4 @@ aws cloudformation delete-stack --stack-name sam-app
 
 ## Conclusion
 
-This extension provides an approach to streamline and centralize the logs using Kinesis firehose.
+This extension provides an approach to streamline and centralize log collection using Kinesis firehose.
