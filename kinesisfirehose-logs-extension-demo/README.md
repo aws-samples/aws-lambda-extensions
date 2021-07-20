@@ -35,11 +35,11 @@ read more about it [here](https://aws.amazon.com/blogs/compute/introducing-aws-l
 
 ## Need to centralize log collection
 
-Having a centeralized log collection mechanism using kinesis firehose provides the following benefits:
+Having a centralized log collection mechanism using kinesis firehose provides the following benefits:
 
-* helps to collect logs from different sources in one place. Even though the sample provided sends logs from Lambda, log routers like `Fluentbit` and `Firelens` can be used to send logs directly to kinesis firehose from container orchestrators like `EKS` and `ECS`.
-* define and standarize the transformations before the log gets delivered to downstream systems like S3, elastic search, redshift etc
-* provides a secure storage area for log data, before it gets written out to the disk. In the event of machine/application failure we still have access to the logs emitted from the source machine/application
+* Helps to collect logs from different sources in one place. Even though the sample provided sends logs from Lambda, log routers like `Fluentbit` and `Firelens` can send logs directly to kinesis firehose from container orchestrators like `EKS` and `ECS`.
+* Define and standardize the transformations before the log gets delivered to downstream systems like S3, elastic search, redshift, etc
+* Provides a secure storage area for log data, before it gets written out to the disk. In the event of machine/application failure, we still have access to the logs emitted from the source machine/application
 
 ## Architecture
 
