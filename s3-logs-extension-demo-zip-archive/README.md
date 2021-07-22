@@ -35,7 +35,7 @@ cd s3-logs-extension-demo-zip-archive
 1. Run the following command for AWS SAM to deploy the components as specified in the `template.yml` file:
 ```bash
 sam build
-# If you don't have 'Python' or 'make' installed, you can use the option to build using a container which uses a python3.8 Docker container image
+# If you receive build errors or don't have 'Python' or 'make' installed, you can use the option to build using a container which uses a python3.8 Docker container image.  
 # sam build --use-container
 sam deploy --stack-name s3-logs-extension-demo --guided
 ```
@@ -71,3 +71,6 @@ The logging extension also receives the log stream directly from Lambda, and cop
 Browse to the [Amazon S3 Console](https://console.aws.amazon.com/S3). Navigate to the S3 bucket created as part of the SAM deployment. 
 
 Downloading the file object containing the copied log stream. The log contains the same platform and function logs, but not the extension logs, as specified during the subscription.
+
+If you receive a `permission denied Extension.LaunchError` in the logs, the extension does not have the neccesary permissions.
+Run `chmod +x logs_api_http_extension.py` and build and deploy the AWS SAM application again.
