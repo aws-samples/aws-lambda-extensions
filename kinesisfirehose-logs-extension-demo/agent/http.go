@@ -17,8 +17,8 @@ import (
 	"github.com/golang-collections/go-datastructures/queue"
 )
 
-// DefaultHttpListenerPort is used to set the URL where the logs will be sent by Logs API
-const DefaultHttpListenerPort = "1234"
+// HttpListenerPort - Env variable to override the default logs http listener port
+const HttpListenerPort = "HTTP_LOGS_LISTENER_PORT"
 
 // LogsApiHttpListener is used to listen to the Logs API using HTTP
 type LogsApiHttpListener struct {
@@ -37,12 +37,13 @@ func NewLogsApiHttpListener(lq *queue.Queue) (*LogsApiHttpListener, error) {
 }
 
 func ListenOnAddress() string {
+	httpListenerPort:= listenerPort()
 	env_aws_local, ok := os.LookupEnv("AWS_SAM_LOCAL")
 	if ok && "true" == env_aws_local {
-		return ":" + DefaultHttpListenerPort
+		return ":" + httpListenerPort
 	}
 
-	return "sandbox:" + DefaultHttpListenerPort
+	return "sandbox.localdomain:" + httpListenerPort
 }
 
 // Start initiates the server in a goroutine where the logs will be sent
@@ -143,12 +144,10 @@ func (a HttpAgent) Init(agentID string) error {
 		MaxBytes:  262144,
 		TimeoutMS: 1000,
 	}
-	if err != nil {
-		return err
-	}
+	
 	destination := logsapi.Destination{
 		Protocol:   logsapi.HttpProto,
-		URI:        logsapi.URI(fmt.Sprintf("http://sandbox:%s", DefaultHttpListenerPort)),
+		URI:        logsapi.URI(fmt.Sprintf("http://sandbox.localdomain:%s", listenerPort())),
 		HttpMethod: logsapi.HttpPost,
 		Encoding:   logsapi.JSON,
 	}
@@ -166,3 +165,14 @@ func (a *HttpAgent) Shutdown() {
 
 	a.listener.Shutdown()
 }
+
+func listenerPort() string{
+	// Default listener port can be overridden by Lambda environment variable
+	httpListenerPort := os.Getenv(HttpListenerPort)
+	if httpListenerPort == "" {
+		httpListenerPort = "1234"
+	}
+
+	return httpListenerPort
+}
+

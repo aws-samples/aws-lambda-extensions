@@ -1,8 +1,8 @@
-# Centralize log collection with Kinesis Firehose using Lambda Extensions
+# Centralize log collection with Amazon Kinesis Data Firehose using Lambda Extensions
 
 ## Introduction
 
-This pattern walks through an approach to centralize log collection for lambda function with Kinesis firehose using external extensions. The provided code sample shows how to get send logs directly to kinesis firehose without sending them to AWS CloudWatch service.
+This pattern walks through an approach to centralize log collection for Lambda function with Kinesis firehose using external extensions. The provided code sample shows how to get send logs directly to Kinesis firehose without sending them to AWS CloudWatch service.
 
 > Note: This is a simple example extension to help you investigate an approach to centralize the log aggregation. This example code is not production ready. Use it with your own discretion after testing thoroughly.
 
@@ -10,9 +10,9 @@ This sample extension:
 
 * Subscribes to receive `platform` and `function` logs.
 * Runs with a main, and a helper goroutine: The main goroutine registers to `ExtensionAPI` and process its `invoke` and `shutdown` events. The helper goroutine:
-  * starts a local HTTP server at the provided port (default 1234) that receives requests from Logs API with `NextEvent` method call
+  * starts a local HTTP server at the provided port (default 1234, the port can be overridden with Lambda environment variable `HTTP_LOGS_LISTENER_PORT` ) that receives requests from Logs API with `NextEvent` method call
   * puts the logs in a synchronized queue (Producer) to be processed by the main goroutine (Consumer)
-* The main goroutine writes the received logs to AWS Kinesis firehose, which gets stored in AWS S3
+* The main goroutine writes the received logs to Amazon Kinesis firehose, which gets stored in Amazon S3
 
 ## Amazon Kinesis Data firehose
 
@@ -31,13 +31,13 @@ Lambda Extensions, a new way to easily integrate Lambda with your favorite monit
 
 read more about it [here](https://aws.amazon.com/blogs/compute/introducing-aws-lambda-extensions-in-preview/)
 
-> Note: The code sample provided part of this pattern uses **external** extension to listen to log events from the lambda function
+> Note: The code sample provided part of this pattern uses **external** extension to listen to log events from the Lambda function
 
 ## Need to centralize log collection
 
-Having a centralized log collection mechanism using kinesis firehose provides the following benefits:
+Having a centralized log collecting mechanism using Kinesis firehose provides the following benefits:
 
-* Helps to collect logs from different sources in one place. Even though the sample provided sends logs from Lambda, log routers like `Fluentbit` and `Firelens` can send logs directly to kinesis firehose from container orchestrators like `EKS` and `ECS`.
+* Helps to collect logs from different sources in one place. Even though the sample provided sends logs from Lambda, log routers like `Fluentbit` and `Firelens` can send logs directly to Kinesis Data firehose from container orchestrators like `EKS` and `ECS`.
 * Define and standardize the transformations before the log gets delivered to downstream systems like S3, elastic search, redshift, etc
 * Provides a secure storage area for log data, before it gets written out to the disk. In the event of machine/application failure, we still have access to the logs emitted from the source machine/application
 
@@ -45,10 +45,10 @@ Having a centralized log collection mechanism using kinesis firehose provides th
 
 ### AWS Services
 
-* AWS Lambda
-* AWS Lambda extension
-* AWS KinesisFirehose
-* AWS S3
+* Amazon Lambda
+* Amazon Lambda extension
+* Amazon Kinesis Data Firehose
+* Amazon S3
 
 ### High level architecture
 
@@ -64,7 +64,7 @@ Once deployed the overall flow looks like below:
 
 > Note: Firehose stream name gets specified as an environment variable (`AWS_KINESIS_STREAM_NAME`)
 
-* The lambda function won't be able to send any logs events to AWS CloudWatch service due to the following explict `DENY` policy:
+* The Lambda function won't be able to send any logs events to Amazon CloudWatch service due to the following explicit `DENY` policy:
 
 ```yaml
 Sid: CloudWatchLogsDeny
@@ -91,8 +91,9 @@ AWS SAM template available part of the root directory can be used for deploying 
 Check out the code by running the following command:
 
 ```bash
-mkdir kinesisfirehose-logs-extension-demo && cd kinesisfirehose-logs-extension-demo
-git clone https://github.com/hariohmprasath/load-testing-serverless-apps.git .
+mkdir aws-lambda-extensions && cd aws-lambda-extensions
+git clone https://github.com/aws-samples/aws-lambda-extensions.git .
+cd kinesisfirehose-logs-extension-demo
 ```
 
 Run the following command from the root directory
@@ -128,7 +129,7 @@ Commands you can use next
 
 ### Deployment
 
-Run the following command to deploy the sample lambda function with the extension
+Run the following command to deploy the sample Lambda function with the extension
 
 ```bash
 sam deploy --guided
@@ -183,7 +184,7 @@ aws lambda invoke \
     --log-type Tail
 ```
 
->Note: Make sure to replace `function-name` with the actual lambda function name
+>Note: Make sure to replace `function-name` with the actual Lambda function name
 
 The function should return ```"StatusCode": 200```, with the below output
 
@@ -195,15 +196,15 @@ The function should return ```"StatusCode": 200```, with the below output
 }
 ```
 
-In a few minutes after the successfully invocation of the lambda function, we should start seeing the log messages from the example extension written to an S3 bucket.
+In a few minutes after the successful invocation of the Lambda function, we should start seeing the log messages from the example extension sent to Amazon Data Firehose which sends the messages to a Amazon S3 bucket.
 
 * Login to AWS console:
   * Navigate to the S3 bucket mentioned under the parameter `BucketName` in the SAM output.
-  * We can see the logs successly written to the S3 bucket, partitioned based on date in `GZIP` format.
+  * We can see the logs successfully written to the S3 bucket, partitioned based on date in `GZIP` format.
   ![s3](images/S3.png)
   
   * Navigate to `"/aws/lambda/${functionname}"` log group inside AWS CloudWatch service.
-  * We shouldn't see any logs created under this log group as we have denied access to write any logs from the lambda function.
+  * We shouldn't see any logs created under this log group as we have denied access to write any logs from the Lambda function.
   ![cloudwatch](images/CloudWatch.png)
 
 ## Cleanup
