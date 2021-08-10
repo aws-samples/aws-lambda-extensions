@@ -78,6 +78,7 @@ out/
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
+
 # JIRA plugin
 atlassian-ide-plugin.xml
 
@@ -228,3 +229,7 @@ csharp-*/*.zip
 
 # SAM
 .aws-sam/
+go-example-logs-api-extension/.idea/vcs.xml
+go-example-logs-api-extension/README.md
+kinesisfirehose-logs-extension-demo/run.sh
+kinesisfirehose-logs-extension-demo/bin/extensions/go-example-logs-api-extension
