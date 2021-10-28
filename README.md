@@ -90,6 +90,11 @@ Coralogix is a machine data analytics SaaS platform that drastically improves th
 Lumigo helps identify functions that are CPU- or network-bound. This allows you to improve their performance by increasing their memory size. | An AWS Lambda extension to collect, enhance, and transport telemetry data from your AWS Lambda functions to New Relic.  | The Sumo Logic extension, along with Sumo Logic's continuous intelligence platform, enables you to get instance visibility into the health and performance of your mission-critical serverless applications.
 [View extension](https://github.com/lumigo-io/lambda-log-shipper) | [View extension](https://github.com/newrelic/newrelic-lambda-extension) | [View extension](https://github.com/SumoLogic/sumologic-lambda-extensions)
 
+## Additional examples that are open-source
+
+* Open Policy Agent (OPA) provides policy-based control for cloud native environments. [GoDaddy](https://github.com/godaddy/opa-lambda-extension-plugin) has open-sourced an OPA plugin for Lambda which uses manual triggers to operate OPA as a Lambda Extension.
+[View extension code](https://github.com/godaddy/opa-lambda-extension-plugin)
+
 ## Available AWS Lambda Ready Partner extensions
 * [AppDynamics](https://docs.appdynamics.com/21.5/en/application-monitoring/install-app-server-agents/serverless-apm-for-aws-lambda/use-the-appdynamics-aws-lambda-extension-to-instrument-serverless-apm-at-runtime): The AppDynamics AWS Lambda Extension provides automatic instrumentation of Node.js or Python Lambda functions to provide visibility and alerting on function performance in a broader business context
 * [Check Point CloudGuard](https://supportcenter.checkpoint.com/supportcenter/portal?eventSubmit_doGoviewsolutiondetails=&solutionid=sk172491&partition=Advanced&product=CloudGuard): Check Point CloudGuard Serverless Protection is a Lambda Layer/Extension-based runtime protection solution providing zero-configuration security for Lambda Functions.
