@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  kinesis-stream-logs-extension-demo
+  
+  Sample SAM Template for kinesis-stream-logs-extension-demo
+
+Parameters:
+  KinesisStreamName:
+    Type: String
+    Default: lambda-logs-direct-kinesis-no-cloudwatch
+    Description: "Kinesis stream name"
+  KinesisRetentionHours:
+    Type: Number
+    Default: 24
+    MinValue: 1
+    MaxValue: 48
+    Description: "How long Kinesis will retain the data for"
+  KinesisShardCount:
+    Type: Number
+    Default: 1
+    MinValue: 1
+    MaxValue: 2
+    Description: "Shard size of the kinesis stream"
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 120
+    MemorySize: 1024
+
+Resources:
+  KinesisStreamLogsApiExtensionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      LayerName: kinesis-stream-logs-extension-demo
+      Description: Send logs to kinesis stream using logs API Extension in Go
+      ContentUri: .
+      CompatibleRuntimes:
+      - nodejs12.x
+      - python3.8
+      - java11
+      - dotnetcore3.1
+      LicenseInfo: MIT-0
+      RetentionPolicy: Delete
+
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - KinesisStream
+    Properties:
+      FunctionName: kinesis-stream-logs-extension-demo-function
+      CodeUri: hello-world/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Layers:
+      - !Ref KinesisStreamLogsApiExtensionLayer
+      Environment:
+        Variables:
+          AWS_KINESIS_STREAM_NAME: !Ref KinesisStreamName
+      Policies:
+        - Statement:
+          - Sid: KinesisStreamFullAccess
+            Effect: Allow
+            Action:
+              - kinesis:*
+            Resource: !GetAtt KinesisStream.Arn
+          - Sid: CloudWatchLogsDeny
+            Effect: Deny
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+
+  KinesisStream:
+    Type: AWS::Kinesis::Stream
+    Properties: 
+      Name: !Ref KinesisStreamName
+      RetentionPeriodHours: !Ref KinesisRetentionHours
+      ShardCount: !Ref KinesisShardCount
+
+Outputs:
+  KinesisStreamLogsApiExtensionLayer:
+    Description: Kinesis Log emiter Lambda Extension Layer Version ARN
+    Value: !Ref KinesisStreamLogsApiExtensionLayer
+  HelloWorldFunction:
+    Description: First Lambda Function ARN
+    Value: !GetAtt HelloWorldFunction.Arn
