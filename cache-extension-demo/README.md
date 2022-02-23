@@ -114,7 +114,7 @@ aws ssm put-parameter \
 Create a new secret in AWS Secrets Manager using the following command
 
 ```bash
-aws secretsmanager \
+aws secretsmanager create-secret \
     --name "secret_info" \
     --secret-string "Hello World"
 ```
