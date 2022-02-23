@@ -65,7 +65,10 @@ Resources:
           - Sid: KinesisStreamFullAccess
             Effect: Allow
             Action:
-              - kinesis:*
+              - kinesis:PutRecord*
+              - kinesis:Get*
+              - kinesis:List*
+              - kinesis:Describe*
             Resource: !GetAtt KinesisStream.Arn
           - Sid: CloudWatchLogsDeny
             Effect: Deny
