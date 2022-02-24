@@ -23,7 +23,11 @@ forward_sigterm_and_wait() {
   trap - SIGTERM
 }
 
+# Initialization
+# To run any extension processes that need to start before the runtime initializes, run them before the /register 
+echo "[${LAMBDA_EXTENSION_NAME}] Initialization"
 # Registration
+# The extension registration also signals to Lambda to start initializing the runtime. 
 HEADERS="$(mktemp)"
 echo "[${LAMBDA_EXTENSION_NAME}] Registering at http://${AWS_LAMBDA_RUNTIME_API}/2020-01-01/extension/register"
   curl -sS -LD "$HEADERS" -XPOST "http://${AWS_LAMBDA_RUNTIME_API}/2020-01-01/extension/register" --header "Lambda-Extension-Name: ${LAMBDA_EXTENSION_NAME}" -d "{ \"events\": [\"INVOKE\", \"SHUTDOWN\"]}" > $TMPFILE
@@ -34,8 +38,8 @@ HEADINFO=$(<$HEADERS)
 EXTENSION_ID=$(grep -Fi Lambda-Extension-Identifier "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
 echo "[${LAMBDA_EXTENSION_NAME}] Registration response: ${RESPONSE} with EXTENSION_ID $(grep -Fi Lambda-Extension-Identifier "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)"
 
-
 # Event processing
+# Continuous loop to wait for events from Extensions API
 while true
 do
   echo "[${LAMBDA_EXTENSION_NAME}] Waiting for event. Get /next event from http://${AWS_LAMBDA_RUNTIME_API}/2020-01-01/extension/event/next"
