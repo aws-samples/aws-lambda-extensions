@@ -39,6 +39,7 @@ In this repository you will find a number of demos and sample projects from AWS 
 
 * [C#.NET Extension](csharp-example-extension/): Sample: how to get a basic extension written in C# up and running.
 
+* [Rust Extension](https://crates.io/crates/lambda-extension): A library that makes it easy to write Lambda extensions in Rust. It also helps with using Lambda Logs API.
 
 
 ### Logs API demos and example extensions
@@ -94,6 +95,8 @@ Lumigo helps identify functions that are CPU- or network-bound. This allows you 
 
 * Open Policy Agent (OPA) provides policy-based control for cloud native environments. [GoDaddy](https://github.com/godaddy/opa-lambda-extension-plugin) has open-sourced an OPA plugin for Lambda which uses manual triggers to operate OPA as a Lambda Extension.
 [View extension code](https://github.com/godaddy/opa-lambda-extension-plugin)
+
+* [Runtime Extensions for AWS Lambda in Rust](https://crates.io/crates/lambda-extension) is a library that makes it easy to write Lambda extensions in Rust. It also helps with using Lambda Logs API.
 
 ## Available AWS Lambda Ready Partner extensions
 * [AppDynamics](https://docs.appdynamics.com/21.5/en/application-monitoring/install-app-server-agents/serverless-apm-for-aws-lambda/use-the-appdynamics-aws-lambda-extension-to-instrument-serverless-apm-at-runtime): The AppDynamics AWS Lambda Extension provides automatic instrumentation of Node.js or Python Lambda functions to provide visibility and alerting on function performance in a broader business context
