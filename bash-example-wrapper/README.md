@@ -23,9 +23,9 @@ $ chmod +x wrapper_script
 ```
 
 ## Deploy a function to test is out
-Create a Lambda function for the Python runtime that includes both the `wrapper_script` and `lambda_function.py` using `lambda_function.lambda_handler` as the function handler.
+Create a Lambda function for the Python runtime 3.8 that includes both the `wrapper_script` and `lambda_function.py` using `lambda_function.lambda_handler` as the function handler.
 
 Add an environment variable to your function's configuration with key `AWS_LAMBDA_EXEC_WRAPPER` and a value of `/var/task/wrapper_script` (if you've included the wrapper script alongside your function code).
 
 ## Invoke the function
-Invoke the function using a test eventand you should see the wrapper script in action reflected in the functions logs and invocation.
+Invoke the function using a test event and you should see the wrapper script in action reflected in the functions logs and invocation.
