@@ -98,6 +98,8 @@ Lumigo helps identify functions that are CPU- or network-bound. This allows you 
 
 * [Runtime Extensions for AWS Lambda in Rust](https://crates.io/crates/lambda-extension) is a library that makes it easy to write Lambda extensions in Rust. It also helps with using Lambda Logs API. See the [aws-lambda-rust-runtime repository](https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/lambda-extension) for examples. 
 
+* [Rust Lambda Extension for any Runtime to preload SSM Parameters as Secure Environment Variables](https://github.com/customink/crypteia). 
+
 ## Available AWS Lambda Ready Partner extensions
 * [AppDynamics](https://docs.appdynamics.com/21.5/en/application-monitoring/install-app-server-agents/serverless-apm-for-aws-lambda/use-the-appdynamics-aws-lambda-extension-to-instrument-serverless-apm-at-runtime): The AppDynamics AWS Lambda Extension provides automatic instrumentation of Node.js or Python Lambda functions to provide visibility and alerting on function performance in a broader business context
 * [Check Point CloudGuard](https://supportcenter.checkpoint.com/supportcenter/portal?eventSubmit_doGoviewsolutiondetails=&solutionid=sk172491&partition=Advanced&product=CloudGuard): Check Point CloudGuard Serverless Protection is a Lambda Layer/Extension-based runtime protection solution providing zero-configuration security for Lambda Functions.
