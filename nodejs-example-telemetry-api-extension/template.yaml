@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: nodejs-example-telemetry-api-extension
+
+Resources:
+  NodejsExampleTelemetryApiExtensionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      LayerName: nodejs-example-telemetry-api-extension-layer
+      ContentUri: .
+      CompatibleRuntimes:
+      - nodejs16.x
+      LicenseInfo: MIT-0
+      RetentionPolicy: Delete
+
+  NodejsExampleTelemetryApiDemoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: nodejs-example-telemetry-api-demo-function
+      CodeUri: function/
+      Handler: index.handler
+      Runtime: nodejs16.x
+      MemorySize: 256
+      Timeout: 5
+      Tracing: Active
+      Layers:
+      - !Ref NodejsExampleTelemetryApiExtensionLayer
+      Environment:
+        Variables:
+          DISPATCH_POST_URI: <enter the external url to dispatch telemetry to>
+          DISPATCH_MIN_BATCH_SIZE: 10
