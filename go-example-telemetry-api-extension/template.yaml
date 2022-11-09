@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: go-example-telemetry-api-extension
+
+Resources:
+  GoExampleTelemetryApiExtensionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      LayerName: go-example-telemetry-api-extension-layer
+      ContentUri: .
+      LicenseInfo: MIT-0
+      RetentionPolicy: Delete
+
+  GoExampleTelemetryApiDemoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: go-example-telemetry-api-demo-function
+      CodeUri: function/
+      Handler: index.handler
+      Runtime: nodejs16.x
+      MemorySize: 256
+      Timeout: 5
+      Tracing: Active
+      Layers:
+      - !Ref GoExampleTelemetryApiExtensionLayer
+      Environment:
+        Variables:
+          DISPATCH_POST_URI: <enter the external url to dispatch telemetry to>
+          DISPATCH_MIN_BATCH_SIZE: 10
