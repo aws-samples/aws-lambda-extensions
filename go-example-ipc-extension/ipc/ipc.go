@@ -38,7 +38,7 @@ func startHTTPServer(port string) {
 		fmt.Fprint(w, "Hello from http server")
 	})
 	// port 8080 is used by the Lambda Invoke API
-	err := http.ListenAndServe(":"+port, nil)
+	err := http.ListenAndServe("sandbox.localdomain:"+port, nil)
 	if err != nil {
 		panic(err)
 	}
