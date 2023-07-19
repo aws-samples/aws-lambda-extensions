@@ -13,6 +13,8 @@ function listen(address, port) {
                 console.log('Logs listener received: ' + body);
                 try {
                     let batch = JSON.parse(body);
+                    console.log('DEBUG body:', body);
+                    console.log('DEBUG batch:', batch);
                     if (batch.length > 0) {
                         logsQueue.push( ...batch );
                     }

@@ -1,47 +1,88 @@
-const fetch = require('node-fetch');
-const {basename} = require('path');
+const http = require('http');
+const { basename } = require('path');
 
 const baseUrl = `http://${process.env.AWS_LAMBDA_RUNTIME_API}/2020-01-01/extension`;
 
 async function register() {
-    const res = await fetch(`${baseUrl}/register`, {
-        method: 'post',
-        body: JSON.stringify({
-            'events': [
-                'INVOKE',
-                'SHUTDOWN'
-            ],
-        }),
-        headers: {
-            'Content-Type': 'application/json',
-            // The extension name must match the file name of the extension itself that's in /opt/extensions/
-            // In this case that's: nodejs-example-logs-api-extension
-            'Lambda-Extension-Name': basename(__dirname),
-        }
+    const requestBody = JSON.stringify({
+        events: ['INVOKE', 'SHUTDOWN'],
     });
 
-    if (!res.ok) {
-        console.error('register failed', await res.text());
-    }
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Lambda-Extension-Name': basename(__dirname),
+        },
+    };
 
-    return res.headers.get('lambda-extension-identifier');
+    return new Promise((resolve, reject) => {
+        const req = http.request(`${baseUrl}/register`, options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => {
+                data += chunk;
+            });
+
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    const extensionId = res.headers['lambda-extension-identifier'];
+                    resolve(extensionId);
+                } else {
+                    console.error('register failed', data);
+                    reject(new Error('Registration failed'));
+                }
+            });
+        });
+
+        req.on('error', (error) => {
+            console.error('register error:', error);
+            reject(error);
+        });
+
+        req.write(requestBody);
+        req.end();
+    });
 }
 
 async function next(extensionId) {
-    const res = await fetch(`${baseUrl}/event/next`, {
-        method: 'get',
+    const options = {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Lambda-Extension-Identifier': extensionId,
-        }
+        },
+    };
+
+    return new Promise((resolve, reject) => {
+        const req = http.request(`${baseUrl}/event/next`, options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => {
+                data += chunk;
+            });
+
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    try {
+                        const eventData = JSON.parse(data);
+                        resolve(eventData);
+                    } catch (error) {
+                        console.error('next failed', error);
+                        reject(error);
+                    }
+                } else {
+                    console.error('next failed', data);
+                    reject(new Error('Next event failed'));
+                }
+            });
+        });
+
+        req.on('error', (error) => {
+            console.error('next error:', error);
+            reject(error);
+        });
+
+        req.end();
     });
-
-    if (!res.ok) {
-        console.error('next failed', await res.text());
-        return null;
-    }
-
-    return await res.json();
 }
 
 module.exports = {
