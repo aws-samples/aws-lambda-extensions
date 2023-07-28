@@ -4,12 +4,12 @@
 package telemetryApi
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/golang-collections/go-datastructures/queue"
 )
@@ -40,20 +40,15 @@ func NewDispatcher() *Dispatcher {
 }
 
 func (d *Dispatcher) Dispatch(ctx context.Context, logEventsQueue *queue.Queue, force bool) {
-	if !logEventsQueue.Empty() && (force || logEventsQueue.Len() >= d.minBatchSize) {
-		l.Info("[dispatcher:Dispatch] Dispatching", logEventsQueue.Len(), "log events")
-		logEntries, _ := logEventsQueue.Get(logEventsQueue.Len())
-		bodyBytes, _ := json.Marshal(logEntries)
-		req, err := http.NewRequestWithContext(ctx, "POST", d.postUri, bytes.NewBuffer(bodyBytes))
-		if err != nil {
-			panic(err)
-		}
-		_, err = d.httpClient.Do(req)
-		if err != nil {
-			l.Error("[dispatcher:Dispatch] Failed to dispatch, returning to queue:", err)
-			for logEntry := range logEntries {
-				logEventsQueue.Put(logEntry)
-			}
-		}
+	l.Info("[dispatcher:Dispatch] Dispatching", logEventsQueue.Len(), "log events")
+	logEntries, _ := logEventsQueue.Get(logEventsQueue.Len())
+	body, err := json.Marshal(logEntries)
+	if err != nil {
+		l.Error("[dispatcher:Dispatch] Failed to marshal log entries", err)
+		return
+	}
+	l.Info("[dispatcher:Dispatch] Dispatched", logEventsQueue.Len(), "log events")
+	if strings.Contains(string(body), "logsDropped") {
+		l.Info("[dispatcher:Dispatch] LOG DROPPED!")
 	}
 }
