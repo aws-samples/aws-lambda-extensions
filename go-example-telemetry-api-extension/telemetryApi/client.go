@@ -117,8 +117,8 @@ type SubscribeResponse struct {
 func (c *Client) Subscribe(ctx context.Context, extensionId string, listenerUri string) (*SubscribeResponse, error) {
 	eventTypes := []EventType{
 		Platform,
-		// Function,
-		// Extension,
+		Function,
+		Extension,
 	}
 
 	bufferingConfig := BufferingCfg{
