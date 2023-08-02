@@ -51,7 +51,7 @@ func (d *Dispatcher) Dispatch(ctx context.Context, logEventsQueue *queue.Queue, 
 		_, err = d.httpClient.Do(req)
 		if err != nil {
 			l.Error("[dispatcher:Dispatch] Failed to dispatch, returning to queue:", err)
-			for logEntry := range logEntries {
+			for _, logEntry := range logEntries {
 				logEventsQueue.Put(logEntry)
 			}
 		}
