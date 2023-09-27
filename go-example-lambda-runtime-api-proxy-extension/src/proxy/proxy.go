@@ -1,6 +1,9 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+// Read about Lambda Runtime API here
+// https://docs.aws.amazon.com/lambda/latest/dg/runtimes-api.html
+
 package proxy
 
 import (
