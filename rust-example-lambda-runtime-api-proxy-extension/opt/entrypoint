@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# 
+# Entrypoint for Lambda sandbox runtime. 
+# This will execute the Runtime API Proxy binary for the correct architecture.
+#
+# This script, when deployed as a layer, must be named the same as crate::EXTENSION_NAME (main.rs)
+#
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+#
+
+# select the architecture of x86_64 or aarch64
+args=("$@")
+case $(uname -m) in
+    x86_64)
+        /opt/lrap_x86_64 "${args[@]}"
+        ;;
+    aarch64)
+        /opt/lrap_aarch64 "${args[@]}"
+        ;;
+    *)
+        echo "Unsupported architecture"
+        exit 1
+        ;;
+esac
