@@ -1,8 +1,8 @@
 # Sample Lambda Runtime API Proxy Extension in Golang
 
-This repo demonstrates a sample of how to build a basic Lambda Runtime API Proxy extension with Golang.
+This is an example to help you start implementing the Lambda Runtime API Proxy pattern. This sample code is not production-ready. Use it at your own discretion, and always testing thoroughly.
 
-> This is a simple example to help you start investigating the Lambda Runtime API Proxy approach. This sample code is not production ready. Use it at your own discretion after testing thoroughly.
+Read the full blog post describing this pattern [here](https://aws.amazon.com/blogs/compute/enhancing-runtime-security-and-governance-with-the-aws-lambda-runtime-api-proxy-extension/)
 
 By implementing a Runtime API proxy as part of your extension, you can hook into the function invocation request and response lifecycle. This allows you to use extensions for implementing advanced observability, security, compliance, and governance scenarios with zero changes to the function code. You can add runtime security mechanisms, such as application firewalls, implement audit procedures for data flowing in and out of the function, enhance observability by auto-injecting tracing headers, and more.
 
