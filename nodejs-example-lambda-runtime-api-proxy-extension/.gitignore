@@ -1,0 +1,4 @@
+node_modules
+.aws-sam
+out
+samconfig.toml
