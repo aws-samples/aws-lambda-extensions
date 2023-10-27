@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: nodejs-example-lambda-runtime-api-proxy-extension
+
+Resources:
+    GolangExampleRuntimeApiProxyExtensionLayer:
+        Type: AWS::Serverless::LayerVersion
+        Metadata:
+            BuildMethod: makefile
+            BuildArchitecture: x86_64
+        Properties:
+            LayerName: golang-example-lambda-runtime-api-proxy-extension-layer
+            ContentUri: .
+            LicenseInfo: MIT-0
+            RetentionPolicy: Delete
+
+    GolangExampleRuntimeApiProxyExtensionDemoFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            Architectures: ['x86_64']
+            FunctionName: Golang-example-lambda-runtime-api-proxy-demo-function
+            CodeUri: function/
+            Handler: index.handler
+            Runtime: nodejs18.x
+            MemorySize: 128
+            Timeout: 3
+            Layers:
+                - !Ref GolangExampleRuntimeApiProxyExtensionLayer
+            Environment:
+                Variables:
+                    AWS_LAMBDA_EXEC_WRAPPER: /opt/wrapper-script.sh
