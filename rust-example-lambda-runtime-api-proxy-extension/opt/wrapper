@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# Launch the application runtime with the Runtime API pointing to LRAP extension.
+# NOTE: This port must be the same as defined in crate::DEFAULT_PROXY_PORT.
+#
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+#
+args=("$@")
+export AWS_LAMBDA_RUNTIME_API="127.0.0.1:9009"
+exec "${args[@]}"
+
