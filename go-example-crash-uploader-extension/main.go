@@ -90,6 +90,8 @@ func processEvents(ctx context.Context) {
 				return
 			} else if res.EventType == extension.Invoke {
 				requestID = res.RequestID
+
+				// trigger scan again
 			}
 		}
 	}

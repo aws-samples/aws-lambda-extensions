@@ -4,86 +4,82 @@
 package main
 
 import (
+	"bytes"
 	"context"
-	"io"
+	"net/http"
 	"os"
+	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 func searchForFilesAndUploadAndDelete(ctx context.Context, s3bucket string, rootDirectory string, substringToMatch string, creds credentials.Value) {
-	filesToUpload, err := getFilesWithSubstring(rootDirectory, substringToMatch)
-	if err != nil {
-		res, _ := extensionClient.ExitError(ctx, err.Error())
-		println(printPrefix, "ExitError response:", prettyPrint(res))
-	}
+	for {
+		time.Sleep(30 * time.Second)
 
-	if len(filesToUpload) > 0 {
-		println(printPrefix, "Found", len(filesToUpload), "files to upload")
-		svc, err := createS3Client(creds)
+		filesToUpload, err := getFilesWithSubstring(rootDirectory, substringToMatch)
 		if err != nil {
+			println(printPrefix, "Cannot list files", err.Error())
 			res, _ := extensionClient.ExitError(ctx, err.Error())
-			println(printPrefix, "ExitError response:", prettyPrint(res))
+			println(printPrefix, "Cannot report ExitError", prettyPrint(res))
 		}
 
-		count := 0
-		for _, file := range filesToUpload {
-			err := uploadFileToS3(svc, s3bucket, file)
+		if len(filesToUpload) > 0 {
+			println(printPrefix, "Found", len(filesToUpload), "files to upload")
+			svc, err := createS3Client(creds)
 			if err != nil {
+				println(printPrefix, "Cannot create an S3 client", err.Error())
 				res, _ := extensionClient.ExitError(ctx, err.Error())
-				println(printPrefix, "ExitError response:", prettyPrint(res))
-			} else {
-				count++
+				println(printPrefix, "Cannot report ExitError", prettyPrint(res))
 			}
-			err = os.Remove(file)
-			if err != nil {
-				res, _ := extensionClient.ExitError(ctx, err.Error())
-				println(printPrefix, "ExitError response:", prettyPrint(res))
+
+			count := 0
+			for _, file := range filesToUpload {
+				err := uploadFile(svc, s3bucket, file, file)
+				if err != nil {
+					println(printPrefix, "Cannot upload file", err.Error())
+					res, _ := extensionClient.ExitError(ctx, err.Error())
+					println(printPrefix, "Cannot report ExitError", prettyPrint(res))
+				} else {
+					count++
+				}
+				err = os.Remove(file)
+				if err != nil {
+					println(printPrefix, "Cannot remove uploaded file", err.Error())
+					res, _ := extensionClient.ExitError(ctx, err.Error())
+					println(printPrefix, "Cannot report ExitError", prettyPrint(res))
+				}
 			}
 		}
 	}
 }
 
-const maxPartSize int64 = 5 * 1024 * 1024 // 5MB
-func uploadFileToS3(svc *s3.S3, s3bucket, filename string) error {
-	println(printPrefix, "Uploading", filename)
+func uploadFile(svc *s3.S3, s3bucket string, key string, filename string) error {
 	file, err := os.Open(filename)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
+	fileInfo, _ := file.Stat()
+	size := fileInfo.Size()
+	buffer := make([]byte, size)
+	file.Read(buffer)
 
-	resp, err := createMultipartUpload(svc, s3bucket, filename)
-	if err != nil {
-		return err
-	}
+	println(printPrefix, "Uploading filename", filename, "with size", size)
 
-	buffer := make([]byte, maxPartSize)
-	var completedParts []*s3.CompletedPart
+	_, err = svc.PutObject(&s3.PutObjectInput{
+		Bucket:             aws.String(s3bucket),
+		Key:                aws.String(key),
+		ACL:                aws.String("private"),
+		Body:               bytes.NewReader(buffer),
+		ContentLength:      aws.Int64(size),
+		ContentType:        aws.String(http.DetectContentType(buffer)),
+		ContentDisposition: aws.String("attachment"),
+	})
 
-	for {
-		_, err := file.Read(buffer)
-		if err != nil {
-			if err != io.EOF {
-				_ = abortMultipartUpload(svc, resp)
-				return err
-			}
-			break
-		}
-		completedPart, err := uploadPart(svc, resp, buffer, len(completedParts)+1)
-		if err != nil {
-			_ = abortMultipartUpload(svc, resp)
-			return err
-		}
+	println(printPrefix, "uploaded to s3:", s3bucket, key)
 
-		completedParts = append(completedParts, completedPart)
-	}
-
-	completeResponse, err := completeMultipartUpload(svc, resp, completedParts)
-	if err != nil {
-		return err
-	}
-	println(completeResponse.String())
-	return nil
+	return err
 }
