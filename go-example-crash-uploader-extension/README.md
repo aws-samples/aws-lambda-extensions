@@ -2,43 +2,29 @@
 
 The provided code sample implements a sample extension that looks for core dumps in the execution environment and uploads them to an Amazon S3 bucket for later inspection and troubleshooting.
 
-## Compile package and dependencies
+## Quick Start
 
-To run this example, you will need to ensure that your build architecture matches that of the Lambda execution environment by compiling with `GOOS=linux` and `GOARCH=amd64` if you are not running in a Linux environment.
+1. Run `./pack.sh` which will compile the crash uploader extension for both x86_64 and arm64 architectures.
 
-Building and saving package into a `bin/extensions` directory:
-```bash
-$ cd go-example-crash-uploader-extension
-$ GOOS=linux GOARCH=amd64 go build -o bin/extensions/go-example-crash-uploader-extension .
-$ chmod +x bin/extensions/go-example-crash-uploader-extension
-```
+    ```bash
+    # Build and create the zip only:
+    ./pack.sh
 
-## Layer Setup Process
-The extensions .zip file should contain a root directory called `extensions/`, where the extension executables are located. In this sample project we must include the `go-example-crash-uploader-extension` binary.
+    # Build and publish the zip files as layers:
+    PUBLISH=1 ./pack.sh
+    ```
 
-Creating zip package for the extension:
-```bash
-$ cd bin
-$ zip -r extension.zip extensions/
-```
-
-Ensure that you have aws-cli v2 for the commands below.
-Publish a new layer using the `extension.zip`. The output of the following command should provide you a layer arn.
-```bash
-aws lambda publish-layer-version \
- --layer-name "go-example-crash-uploader-extension" \
- --region <use your region> \
- --zip-file  "fileb://extension.zip"
-```
-Note the LayerVersionArn that is produced in the output.
-eg. `"LayerVersionArn": "arn:aws:lambda:<region>:123456789012:layer:<layerName>:1"`
-
-Add the newly created layer version to a Lambda function. Ensure to include environment variables like `BUCKET`="your-bucket-name".
-
+1. You may need to increase your `/tmp` size, depending on the expected size of the core dump: <https://aws.amazon.com/blogs/aws/aws-lambda-now-supports-up-to-10-gb-ephemeral-storage/>
+1. `./pack.sh` will create one layer zip file per architecture, upload and attach it to your target Lambda function.
+    1. Note the LayerVersionArn that is produced in the output.
+        eg. `"LayerVersionArn": "arn:aws:lambda:<region>:123456789012:layer:<layerName>:1"`
+1. Add a new `BUCKET` env var to the target Lambda function with the S3 Bucket core dumps would be uploaded to.
+1. Lambda function needs to have permission to upload to the specified bucket.
 
 ## Function Invocation and Extension Execution
 
 When invoking the function, you should now see log messages from the example extension similar to the following:
+
 ```
     XXXX-XX-XXTXX:XX:XX.XXX-XX:XX    EXTENSION Name: go-example-crash-uploader-extension State: Ready Events: [INVOKE,SHUTDOWN]
     XXXX-XX-XXTXX:XX:XX.XXX-XX:XX    START RequestId: 9ca08945-de9b-46ec-adc6-3fe9ef0d2e8d Version: $LATEST
@@ -66,5 +52,5 @@ When invoking the function, you should now see log messages from the example ext
     ...
     ...
     XXXX-XX-XXTXX:XX:XX.XXX-XX:XX    END RequestId: 9ca08945-de9b-46ec-adc6-3fe9ef0d2e8d
-    XXXX-XX-XXTXX:XX:XX.XXX-XX:XX    REPORT RequestId: 9ca08945-de9b-46ec-adc6-3fe9ef0d2e8d Duration: 3.78 ms	Billed Duration: 100 ms	Memory Size: 128 MB	Max Memory Used: 59 MB	Init Duration: 264.75 ms
+    XXXX-XX-XXTXX:XX:XX.XXX-XX:XX    REPORT RequestId: 9ca08945-de9b-46ec-adc6-3fe9ef0d2e8d Duration: 3.78 ms Billed Duration: 100 ms Memory Size: 128 MB Max Memory Used: 59 MB Init Duration: 264.75 ms
 ```
