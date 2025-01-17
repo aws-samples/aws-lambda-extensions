@@ -24,7 +24,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda function that retrieves AppConfig configuration settings using Lambda extensions.
-      Runtime: nodejs12.x
+      Runtime: nodejs22.x
       Handler: src/AppConfigExtensionDemoFunction.handler
       Layers:
         - !Ref AppConfigARN
@@ -41,7 +41,7 @@ Resources:
               - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}'
               - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/environment/${AppConfigEnvironment}'
               - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/configurationprofile/${AppConfigConfigurationProfile}'
-              - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/environment/${AppConfigEnvironment}'/configuration/${AppConfigConfigurationProfile}'
+              - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/environment/${AppConfigEnvironment}/configuration/${AppConfigConfigurationProfile}'
             Action:
               - appconfig:StartConfigurationSession
               - appconfig:GetLatestConfiguration
@@ -49,7 +49,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda function that retrieves AppConfig configuration settings using Lambda extensions.
-      Runtime: nodejs12.x
+      Runtime: nodejs22.x
       Handler: src/AppConfigExtensionDemoFunction.handler
       Layers:
         - !Ref AppConfigARN
@@ -66,7 +66,7 @@ Resources:
               - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}'
               - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/environment/${AppConfigEnvironment}'
               - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/configurationprofile/${AppConfigConfigurationProfile}'
-              - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/environment/${AppConfigEnvironment}'/configuration/${AppConfigConfigurationProfile}'
+              - !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigApplication}/environment/${AppConfigEnvironment}/configuration/${AppConfigConfigurationProfile}'
             Action:
               - appconfig:StartConfigurationSession
               - appconfig:GetLatestConfiguration
