@@ -42,7 +42,32 @@ async function next(extensionId) {
     return await res.json();
 }
 
+async function error(extensionId, phase, err) {
+    const errorType = `Extension.${err.name || 'UnknownError'}`;
+    await fetch(`${baseUrl}/${phase}/error`, {
+        method: 'post',
+        body: JSON.stringify({
+            errorMessage: err.message || `${err}`,
+            errorType: errorType,
+            stackTrace: [ err.stack ]
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            'Lambda-Extension-Identifier': extensionId,
+            'Lambda-Extension-Function-Error-Type': errorType,
+        }
+    });
+
+    if (!res.ok) {
+        console.error(`${phase} error failed`, await res.text());
+        throw new AggregateError([err, res.text()], `Failure reporting ${phase} error`);
+    }
+
+    throw err;
+}
+
 module.exports = {
     register,
     next,
+    error
 };
